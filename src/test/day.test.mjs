@@ -26,7 +26,7 @@ describe('Day', () => {
   const failureInput = [
     [undefined, {}, 'is null or undefined'],
     [null, {}, 'is null or undefined'],
-    [12, {}, 'must be a string'],
+    [12, {}, "Expected type 'string', but received type 'number'.$"],
     ['01.01.01', {}, 'ambiguous'],
     ['foo', {}, 'not recognized'],
     ['2024-02-30', {}, 'invalid day'], // day overflow,
@@ -44,7 +44,7 @@ describe('Day', () => {
     ['2 Jan 2024', { min : /invalid type/ }, "constraint 'min'.*?has nonconvertible type"],
     ['2 Jan 2024', { validateInput : (input) => input.endsWith('2023') }, 'failed custom input validation'],
     ['2 Jan 2024', { validateValue : (value) => value.getYear() === 2023 }, 'failed custom value validation']
-  ].map((params) => { params[1].name = 'foo'; params[2] = "Day 'foo'.*?" + params[2]; return params })
+  ].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
 
   test.each(validInput)('%s and options %p => year: %p, month: %p, day of month: %p',
     (input, options, year, month, dayOfMonth) => {
@@ -65,7 +65,7 @@ describe('Day', () => {
 
   test("Explicit name overrides 'this' context", () => {
     const obj = { name : 'foo', type : Day }
-    expect(() => obj.type(undefined, { name : 'bar' })).toThrow(/Day 'bar'/)
+    expect(() => obj.type(undefined, { name : 'bar' })).toThrow(/argument 'bar'/)
   })
 
   test('Result valueOf() return epoch seconds',

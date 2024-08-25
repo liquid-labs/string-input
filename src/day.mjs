@@ -1,4 +1,4 @@
-import { intlDateRE, rfc2822DayREString, usDateRE } from 'regex-repo'
+import { intlDateRe, rfc2822DayReString, usDateRe } from 'regex-repo'
 
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
@@ -39,11 +39,11 @@ const Day = function (input, options = this || {}) {
   let { max, min } = options
 
   const selfDescription = describeInput('Day', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
-  const intlMatch = input.match(intlDateRE)
-  const usMatch = input.match(usDateRE)
-  const rfc2822Match = input.match(new RegExp(`^${rfc2822DayREString}$`))
+  const intlMatch = input.match(intlDateRe)
+  const usMatch = input.match(usDateRe)
+  const rfc2822Match = input.match(new RegExp(`^${rfc2822DayReString}$`))
 
   const matchCount = (intlMatch !== null ? 1 : 0) +
     (usMatch !== null ? 1 : 0) +
@@ -55,7 +55,7 @@ const Day = function (input, options = this || {}) {
     throw Error(`${selfDescription} value '${input}' not recognized as either US, international, or RFC 2822 style date. Try something like '1/15/2024', '2024-1-15', or '15 Jan 2024'.`)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<day>' }, options)
   checkValidateInput(input, validationOptions)
 
   const ceIndicator = intlMatch?.[1] || usMatch?.[3] || ''
@@ -95,7 +95,7 @@ const Day = function (input, options = this || {}) {
     limitToString : (limit) => `${limit.getUTCFullYear()}/${('' + (limit.getUTCMonth() + 1)).padStart(2, '0')}/${('' + limit.getDate()).padStart(2, '0')}`,
     max,
     min,
-    selfDescription,
+    name,
     value         : date
   })
 

@@ -26,7 +26,7 @@ const Numeric = function (input, options = this || {}) {
   const { name, allowLeadingZeros, divisibleBy, max, min } = options
 
   const selfDescription = describeInput('Numeric', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   if (allowLeadingZeros !== true && leadingZeroRE.test(input) === true) {
     throw new Error(`${selfDescription} input value '${input}' contains disallowed leading zeros.`)
@@ -34,11 +34,11 @@ const Numeric = function (input, options = this || {}) {
     throw new Error(`${selfDescription} input value '${input}' contains disallowed leading or trailing space.`)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<numeric>' }, options)
   checkValidateInput(input, validationOptions)
 
   const value = Number(input)
-  checkMaxMin({ input, max, min, selfDescription, value })
+  checkMaxMin({ input, max, min, name, value })
   if (divisibleBy !== undefined && (value % divisibleBy) !== 0) {
     throw new Error(`${selfDescription} input '${input}' must be divisible by '${divisibleBy}'.`)
   }

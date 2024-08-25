@@ -59,7 +59,7 @@ const DateTime = function (input, options = this || {}) {
   let { min, max } = options
 
   const selfDescription = describeInput('Date-time', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   let value
 
@@ -81,7 +81,7 @@ const DateTime = function (input, options = this || {}) {
     throw new Error(`${selfDescription} does not allow special EOD time '24:00'.`)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<date-time>' }, options)
   checkValidateInput(input, validationOptions)
 
   // we compare DateTime objects so we can preserve the timezone in the `limitToString()` function. The problem is that
@@ -107,7 +107,7 @@ const DateTime = function (input, options = this || {}) {
   } else if (min !== undefined && min.isDateTimeObject?.() !== true) {
     throw new Error(`${selfDescription} constraint 'min' has nonconvertible type. Use 'string', 'number', Date', or 'DateTime'.`)
   }
-  checkMaxMin({ input, limitToString, max, min, selfDescription, value })
+  checkMaxMin({ input, limitToString, max, min, name, value })
 
   checkValidateValue(value, validationOptions)
 

@@ -33,7 +33,7 @@ const BooleanString = function (input, options = this || {}) {
   } = options
 
   const selfDescription = describeInput('Boolean', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   input = input.toLowerCase()
 
@@ -67,7 +67,7 @@ const BooleanString = function (input, options = this || {}) {
     }
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<boolean>' }, options)
   checkValidateInput(input, validationOptions)
   checkValidateValue(value, validationOptions)
 

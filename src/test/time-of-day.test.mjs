@@ -21,18 +21,18 @@ describe('TimeOfDay', () => {
   ]
 
   const invalidInput = [
-    [undefined, {}, 'is null or undefined'],
-    [null, {}, 'is null or undefined'],
-    [12, {}, 'must be a string'],
+    [undefined, {}, 'is missing or empty'],
+    [null, {}, 'is missing or empty'],
+    [12, {}, "type 'string' is wrong type. Received type 'number'.$"],
     ['foo', {}, 'not recognized'],
-    ['2400', { noEOD : true }, 'disallowed special'],
-    ['12:00', { max : '11:59' }, "must be less than or equal to '11:59:00'"],
-    ['12:00', { min : '12:01' }, "must be greater than or equal to '12:01:00"],
+    ['2400', { noEOD : true }, "special 'end-of-day' time disallowed"],
+    ['12:00', { max : '11:59' }, "must be less than or equal to '11:59'"],
+    ['12:00', { min : '12:01' }, "must be greater than or equal to '12:01"],
     ['12:00', { max : 'foo' }, "constraint 'max'.*?not recognized"],
     ['12:00', { min : 'foo' }, "constraint 'min'.*?not recognized"],
     ['1200', { validateInput : (input) => /:/.test(input) }, 'failed custom input validation'],
     ['12:00', { validateValue : (value) => value.getSeconds() !== 0 }, 'failed custom value validation']
-  ].map((params) => { params[1].name = 'foo'; params[2] = "Time of day 'foo'.*?" + params[2]; return params })
+  ].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
 
   test.each(validInput)('%s, options %p => hours: %s, minutes: %s, seconds: %s, frac seconds: %s',
     (input, options, hours, mins, secs, fracSecs) => {
@@ -53,6 +53,6 @@ describe('TimeOfDay', () => {
 
   test("Explicit name overrides 'this' context", () => {
     const obj = { name : 'foo', type : TimeOfDay }
-    expect(() => obj.type(undefined, { name : 'bar' })).toThrow(/Time of day 'bar'/)
+    expect(() => obj.type(undefined, { name : 'bar' })).toThrow(/Command argument 'bar'/)
   })
 })

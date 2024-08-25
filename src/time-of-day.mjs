@@ -1,4 +1,5 @@
-import { militaryTimeRE, timeRE, twentyFourHourTimeRE } from 'regex-repo'
+import { militaryTimeRe, timeRe, twentyFourHourTimeRe } from 'regex-repo'
+import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
@@ -40,22 +41,26 @@ const TimeOfDay = function (input, options = this || {}) {
   let { min, max } = options
 
   const selfDescription = describeInput('Time of day', name)
-  typeChecks(input, selfDescription, name)
+  typeChecks({ input, name })
 
-  const militaryTimeMatch = input.match(militaryTimeRE)
-  const timeMatch = input.match(timeRE)
-  const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRE)
+  const militaryTimeMatch = input.match(militaryTimeRe)
+  const timeMatch = input.match(timeRe)
+  const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRe)
 
   if (militaryTimeMatch === null && timeMatch === null && twentyFourHourTimeMatch === null) {
-    throw Error(`${selfDescription} value '${input}' not recognized as either military, standard, or 24-hour time. Try something like '2130', 9:30 PM', or '21:30'.`)
+    throw new ArgumentInvalidError({ 
+      argumentName: name, 
+      argumentValue: input, 
+      issue: 'not recognized as either military, standard, or 24-hour time'
+    })
   }
 
   const isEOD = militaryTimeMatch?.[1] !== undefined || twentyFourHourTimeMatch?.[1] !== undefined
   if (noEOD === true) {
-    throw new Error(`${selfDescription} indicates disallowed special 'end-of-day' time.`)
+    throw new ArgumentInvalidError({ argumentName: name, issue: "special 'end-of-day' time disallowed" })
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<time>' }, options)
   checkValidateInput(input, validationOptions)
 
   const value = getValue({ isEOD, militaryTimeMatch, timeMatch, twentyFourHourTimeMatch })
@@ -63,10 +68,11 @@ const TimeOfDay = function (input, options = this || {}) {
   if (max !== undefined) {
     max = TimeOfDay(max, { name : `${name}' constraint 'max` })
   }
+
   if (min !== undefined) {
     min = TimeOfDay(min, { name : `${name}' constraint 'min` })
   }
-  checkMaxMin({ input, limitToString : limitDescriptor, max, min, selfDescription, value })
+  checkMaxMin({ input, limitToString : limitDescriptor, max, min, name, value })
 
   checkValidateValue(value, validationOptions)
 
@@ -110,7 +116,17 @@ const getValue = ({ isEOD, militaryTimeMatch, timeMatch, twentyFourHourTimeMatch
     getMinutes           : () => minutes,
     getSeconds           : () => seconds,
     getFractionalSeconds : () => fracSeconds,
-    valueOf              : () => (hours * 60 * 60) + (minutes * 60) + seconds + fracSeconds
+    valueOf              : () => (hours * 60 * 60) + (minutes * 60) + seconds + fracSeconds,
+    toString : () => {
+      let time = `${('' + (hours)).padStart(2, '0')}:${('' + (minutes || '00')).padStart(2, '0')}`
+      if (seconds > 0 || fracSeconds > 0) {
+        time += ('' + (seconds || '00')).padStart(2, '0')
+        if (fracSeconds !== undefined) {
+          time += fracSeconds
+        }
+      }
+      return time
+    }
   }
 }
 

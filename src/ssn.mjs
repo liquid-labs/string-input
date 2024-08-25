@@ -20,13 +20,13 @@ const SSN = function (input, options = this || {}) {
   const { name } = options
 
   const selfDescription = describeInput('SSN', name)
-  typeChecks(input)
+  typeChecks({ input, name })
 
   const ssnMatch = input.match(ssnRE)
   if (ssnMatch === null) {
     throw new Error(`${selfDescription} input '${input}' is not a valid SSN. Ensure there are nine digits and a valid area code.`)
   }
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<SSN>' }, options)
   checkValidateInput(input, validationOptions)
 
   const value = `${ssnMatch[1]}-${ssnMatch[2]}-${ssnMatch[3]}`

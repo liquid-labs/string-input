@@ -33,7 +33,7 @@ const CardNumber = function (input, options = this || {}) {
   } = options
 
   const selfDescription = describeInput('Card number', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   if (formattedNumberRE.test(input) === false) {
     throw new Error(`${selfDescription} input '${input}' doesn't appear to be a card number; expects a number with optional dashes ('-') or spaces (' ').`)
@@ -71,7 +71,7 @@ const CardNumber = function (input, options = this || {}) {
     throw new Error(`${selfDescription} input '${input}' is an invalid IIN or partial IIN. Must match one of ${iins.join(', ')}.`)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<card number>' }, options)
   checkValidateInput(input, validationOptions)
 
   if (luhn.validate(numberString) !== true) {

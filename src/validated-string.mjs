@@ -37,7 +37,7 @@ const ValidatedString = function (input, options = this || {}) {
   let { matchRE } = options
 
   const selfDescription = describeInput('String', name)
-  typeChecks(input)
+  typeChecks({ input, name })
 
   if (after !== undefined && [after, input].sort()[0] !== after) {
     throw new Error(`${selfDescription} input '${input}' must be lexicographically after '${after}'.`)
@@ -73,7 +73,7 @@ const ValidatedString = function (input, options = this || {}) {
     throw new Error(`${selfDescription} input '${input}' must be one of '${oneOf.join("', '")}'.`)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string' }, options)
   checkValidateInput(input, validationOptions)
   checkValidateValue(input, validationOptions)
 

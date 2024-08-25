@@ -34,7 +34,7 @@ const Integer = function (input, options = this || {}) {
   } = options
 
   const selfDescription = describeInput('Integer', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   if (allowLeadingZeros !== true && input.match(integerRE) === null) {
     let msg = `${selfDescription} input value '${input}' does not appear to be an integer.`
@@ -47,10 +47,10 @@ const Integer = function (input, options = this || {}) {
     throw new Error(msg)
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<integer>' }, options)
   checkValidateInput(input, validationOptions)
   const value = parseInt(input)
-  checkMaxMin({ input, max, min, selfDescription, value })
+  checkMaxMin({ input, max, min, name, value })
   if (divisibleBy !== undefined && (value % divisibleBy) !== 0) {
     throw new Error(`${selfDescription} input '${input}' must be divisible by '${divisibleBy}'.`)
   }

@@ -1,9 +1,11 @@
-const typeChecks = (input, selfDescription) => {
+import { ArgumentMissingError, ArgumentTypeError } from 'standard-error-set'
+
+const typeChecks = ({ input, name }) => {
   if (input === undefined || input === null) {
-    throw new Error(`${selfDescription} value is null or undefined.`)
+    throw new ArgumentMissingError({ argumentName: name })
   }
   if ((typeof input) !== 'string') {
-    throw new Error(`${selfDescription} value must be a string.`)
+    throw new ArgumentTypeError({ argumentName: name, argumentType: 'string', receivedType: typeof input })
   }
 }
 

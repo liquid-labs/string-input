@@ -20,13 +20,13 @@ const EIN = function (input, options = this || {}) {
   const { name } = options
 
   const selfDescription = describeInput('EIN', name)
-  typeChecks(input)
+  typeChecks({ input, name })
 
   const einMatch = input.match(einRE)
   if (einMatch === null) {
     throw new Error(`${selfDescription} input '${input}' is not a valid EIN. Ensure there are nine digits and a valid area code.`)
   }
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign({ input, name, type: 'string<EIN>' }, options)
   checkValidateInput(input, validationOptions)
 
   const value = input.slice(0, 2) + '-' + input.slice(-7)

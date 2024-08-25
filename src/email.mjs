@@ -106,7 +106,7 @@ const Email = function (input, options = this || {}) {
 
   const selfDescription = describeInput('Email', name)
 
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name })
 
   if (options.validateValue !== undefined) {
     options.validateResult = options.validateValue
