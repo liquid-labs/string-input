@@ -1,4 +1,5 @@
-import { floatRE } from 'regex-repo'
+import { ArgumentInvalidError } from 'standard-error-set'
+import { floatRe } from 'regex-repo'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
@@ -38,11 +39,21 @@ const BooleanString = function (input, options = this || {}) {
   input = input.toLowerCase()
 
   if (noAbbreviations === true && (input === 't' || input === 'f' || input === 'y' || input === 'n')) {
-    throw new Error(`${selfDescription} input '${input}' is disallowed abbreviated boolean value, use ${possibleBooleanValues(options)}.`)
+    throw new ArgumentInvalidError({ 
+      argumentName: name, 
+      argumentValue: input, 
+      issue: 'is disallowed abbreviated value', 
+      hint: `Use ${possibleBooleanValues(options)}.`
+    })
   }
 
   if (noYesNo === true && (input === 'yes' || input === 'y' || input === 'no' || input === 'n')) {
-    throw new Error(`${selfDescription} input '${input}' is disallowed yes/no value, use ${possibleBooleanValues(options)}.`)
+    throw new ArgumentInvalidError({ 
+      argumentName: name, 
+      argumentValue: input, 
+      issue: 'is disallowed yes/no value', 
+      hint: `Use ${possibleBooleanValues(options)}.`
+    })
   }
 
   let value
@@ -53,17 +64,33 @@ const BooleanString = function (input, options = this || {}) {
   } else {
     const numericValue = Number.parseFloat(input)
     if (noNumeric === true && Number.isNaN(numericValue) === false) {
-      throw new Error(`${selfDescription} input '${input}' is disallowed numeric value, use ${possibleBooleanValues(options)}.`)
-    } else if (Number.isNaN(numericValue) === true ||
-      floatRE.test(input) !== true) { // parseFloat allows invalid input like '1.0' or '234abcd'
-      throw new Error(`${selfDescription} input '${input}' could not be parsed as a boolean value, use ${possibleBooleanValues(options)}.`)
+      throw new ArgumentInvalidError({ 
+        argumentName: name, 
+        argumentValue: input, 
+        issue: 'is disallowed numeric value', 
+        hint: `Use ${possibleBooleanValues(options)}.`
+      })
+    }
+    else if (Number.isNaN(numericValue) === true ||
+      floatRe.test(input) !== true) { // parseFloat allows invalid input like '1.0' or '234abcd'
+      throw new ArgumentInvalidError({ 
+        argumentName: name, 
+        argumentValue: input, 
+        issue: 'could not be parsed as a boolean value', 
+        hint: `Use ${possibleBooleanValues(options)}.`
+      })
     }
     if (numericValue === 0 || (treatNegativeValuesAsFalse === true && numericValue < 0)) {
       value = false
     } else if (numericValue > 0) {
       value = true
     } else {
-      throw new Error(`${selfDescription} input '${input}' is disallowed negative numeric value; set 'treatNegativeValuesAsFalse' true or use ${possibleBooleanValues(options)}.`)
+      throw new ArgumentInvalidError({ 
+        argumentName: name, 
+        argumentValue: input, 
+        issue: 'is ambiguous negative numeric value', 
+        hint: `Use ${possibleBooleanValues(options)}.`
+      })
     }
   }
 

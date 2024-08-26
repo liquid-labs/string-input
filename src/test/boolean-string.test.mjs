@@ -25,16 +25,20 @@ describe('BooleanString', () => {
     expect(BooleanString(input, options)).toBe(expected))
 
   test('disallows negative numerics by default', () =>
-    expect(() => BooleanString('-1')).toThrow(/is disallowed negative numeric value/))
+    expect(() => BooleanString('-1'))
+      .toThrow(/is ambiguous negative numeric value\. Use true\/false, t\/f, yes\/no, y\/n, or 0\/positive number\.$/))
 
   test.each(['t', 'T', 'f', 'y', 'n'])("respects 'noAbbreviations' with input %s", (input) =>
-    expect(() => BooleanString(input, { noAbbreviations : true })).toThrow(/disallowed abbreviated boolean value/))
+    expect(() => BooleanString(input, { noAbbreviations : true }))
+      .toThrow(/is disallowed abbreviated value\. Use true\/false, yes\/no, or 0\/positive number.$/))
 
   test.each(['Yes', 'yes', 'no', 'y', 'n'])("respects 'noYesNo' with input %s", (input) =>
-    expect(() => BooleanString(input, { noYesNo : true })).toThrow(/is disallowed yes\/no value/))
+    expect(() => BooleanString(input, { noYesNo : true }))
+      .toThrow(/is disallowed yes\/no value\. Use true\/false, t\/f, or 0\/positive number\.$/))
 
   test.each(['-1', '0', '1'])("respects 'noNumeric' with input %s'", (input) =>
-    expect(() => BooleanString(input, { noNumeric : true })).toThrow(/is disallowed numeric value/))
+    expect(() => BooleanString(input, { noNumeric : true }))
+      .toThrow(/is disallowed numeric value. Use true\/false, t\/f, yes\/no, or y\/n\.$/))
 
   test.each(['foo', 'trueeee', '1.0.0'])('throws parse error on %s', (input) =>
     expect(() => BooleanString(input)).toThrow(/could not be parsed as a boolean value/))
