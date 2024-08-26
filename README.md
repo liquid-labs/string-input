@@ -172,7 +172,7 @@ order.
 **Returns**: [`DateTimeData`](#DateTimeData) - The date-time data.
 
 <a id="Day"></a>
-### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L37)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L38)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates input string as a specific day (date). Can handle year first and US format, with or without
 delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
@@ -328,7 +328,7 @@ Parses and validates a string as a valid Social Security Number, with our withou
 **Returns**: `string` - A canonically formatted SSN like 'XX-XXX-XXXX'.
 
 <a id="TimeOfDay"></a>
-### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L38)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L39)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates the input as a time-of-day. Because there is no date component and some timezones would be
 ambiguous, this type does not recognize nor accepts timezone specification.
@@ -395,7 +395,7 @@ Date-time components.
 | `valueOf()` | `function` | The milliseconds since the epoch (UTC) represented by the original   input string (integer). |
 
 <a id="DayData"></a>
-### `DayData` <sup>↱<sup>[source code](./src/day.mjs#L10)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
+### `DayData` <sup>↱<sup>[source code](./src/day.mjs#L11)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
 
 Represents the components of specific day.
 
@@ -429,7 +429,7 @@ Email address and components.
 | `commentDomainSuffix` | `string` \| `undefined` | The embedded comment, if any, immediately after the domain or   domain literal. |
 
 <a id="TimeData"></a>
-### `TimeData` <sup>↱<sup>[source code](./src/time-of-day.mjs#L9)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
+### `TimeData` <sup>↱<sup>[source code](./src/time-of-day.mjs#L10)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
 
 Represents the time components.
 
