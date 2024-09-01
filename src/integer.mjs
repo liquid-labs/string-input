@@ -1,9 +1,9 @@
-import { integerRE } from 'regex-repo'
+import { integerRe } from 'regex-repo'
+import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 const anyDigitsRE = /^-?\d+$/
@@ -13,6 +13,8 @@ const anyDigitsRE = /^-?\d+$/
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.allowLeadingZeros - Overrides default behavior which rejects strings with leading zeros.
  * @param {number} options.divisibleBy - Requires the resulting integer value be divisible by the indicated number (
  *   which need not itself be an integer).
@@ -25,34 +27,45 @@ const anyDigitsRE = /^-?\d+$/
  * @returns {number} A primitive integer.
  */
 const Integer = function (input, options = this || {}) {
-  const {
-    name,
-    allowLeadingZeros,
-    divisibleBy,
-    max,
-    min
-  } = options
+  const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
 
-  const selfDescription = describeInput('Integer', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name, status })
 
-  if (allowLeadingZeros !== true && input.match(integerRE) === null) {
-    let msg = `${selfDescription} input value '${input}' does not appear to be an integer.`
+  if (allowLeadingZeros !== true && input.match(integerRe) === null) {
+    let issue = 'does not appear to be an integer'
     if (input.match(anyDigitsRE)) {
-      msg += ' Leading zeros are not allowed.'
+      issue += '; leading zeroes are not allowed.'
     }
-    throw new Error(msg)
-  } else if (allowLeadingZeros === true && input.match(anyDigitsRE) === null) {
-    const msg = `${selfDescription} input value '${input}' does not appear to be an integer (leading zeros allowed).`
-    throw new Error(msg)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue,
+      status,
+    })
+  }
+  else if (allowLeadingZeros === true && input.match(anyDigitsRE) === null) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'does not appear to be an integer (leading zeros allowed)',
+      status,
+    })
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<integer>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
   const value = parseInt(input)
-  checkMaxMin({ input, max, min, selfDescription, value })
-  if (divisibleBy !== undefined && (value % divisibleBy) !== 0) {
-    throw new Error(`${selfDescription} input '${input}' must be divisible by '${divisibleBy}'.`)
+  checkMaxMin({ input, max, min, name, status, value })
+  if (divisibleBy !== undefined && value % divisibleBy !== 0) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : `must be divisible by '${divisibleBy}'`,
+      status,
+    })
   }
   checkValidateValue(value, validationOptions)
 

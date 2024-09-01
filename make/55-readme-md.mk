@@ -7,8 +7,11 @@ $(README_MD): $(README_MD_SRC)
 	npx jsdoc2md \
 	  --configure ./jsdoc.config.json \
 	  --files 'src/**/*' \
-	  --global-index-format list \
+	  --global-index-format grouped \
 	  --name-format \
 	  --plugin dmd-readme-api \
+	  --plugin @liquid-labs/dmd \
+	  --clever-links \
+	  --no-cache \
 	  >> $@
 	cat $(SRC)/docs/README.02.md >> $@

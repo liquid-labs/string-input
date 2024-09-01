@@ -1,10 +1,10 @@
-import { intlDateRE, rfc2822DayREString, usDateRE } from 'regex-repo'
+import { ArgumentInvalidError, ArgumentTypeError } from 'standard-error-set'
+import { intlDateRe, rfc2822DayReString, usDateRe } from 'regex-repo'
 
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { convertMonthName } from './lib/date-time/convert-month-name'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 /**
@@ -28,6 +28,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
  * @param {string|number|Date} options.max - The latest day to be considered valid.
  * @param {string|number|Date} options.min - The earliest day to be considered valid.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
  *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
  * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
@@ -35,35 +37,53 @@ import { typeChecks } from './lib/type-checks'
  * @returns {DayData} The day/date data.
  */
 const Day = function (input, options = this || {}) {
-  const { name } = options
+  const { name, status } = options
   let { max, min } = options
 
-  const selfDescription = describeInput('Day', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name, status })
 
-  const intlMatch = input.match(intlDateRE)
-  const usMatch = input.match(usDateRE)
-  const rfc2822Match = input.match(new RegExp(`^${rfc2822DayREString}$`))
+  const intlMatch = input.match(intlDateRe)
+  const usMatch = input.match(usDateRe)
+  const rfc2822Match = input.match(new RegExp(`^${rfc2822DayReString}$`))
 
-  const matchCount = (intlMatch !== null ? 1 : 0) +
-    (usMatch !== null ? 1 : 0) +
-    (rfc2822Match !== null ? 1 : 0)
+  const matchCount =
+    (intlMatch !== null ? 1 : 0)
+    + (usMatch !== null ? 1 : 0)
+    + (rfc2822Match !== null ? 1 : 0)
 
   if (matchCount > 1) {
-    throw new Error(`${selfDescription} value '${input}' is ambiguous; cannot determine month, date, or year. Try specifying four digit year (with leading zeros if necessary) to disambiguate US (MM/DD/YYYY) vs international (YYYY/MM/DD) formats.`)
-  } else if (matchCount === 0) {
-    throw Error(`${selfDescription} value '${input}' not recognized as either US, international, or RFC 2822 style date. Try something like '1/15/2024', '2024-1-15', or '15 Jan 2024'.`)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'is ambiguous',
+      hint          : 'Try specifying four digit year (with leading zeros if necessary) to disambiguate US (MM/DD/YYYY) vs international (YYYY/MM/DD) formats.',
+    })
+  }
+  else if (matchCount === 0) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue :
+        'is not recognized as either US, international, or a RFC 2822 style date',
+      hint : "Try something like '1/15/2024', '2024-1-15', or '15 Jan 2024'.",
+    })
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<day>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
   const ceIndicator = intlMatch?.[1] || usMatch?.[3] || ''
-  const year = parseInt(ceIndicator + (intlMatch?.[2] || usMatch?.[4] || rfc2822Match?.[4]))
+  const year = parseInt(
+    ceIndicator + (intlMatch?.[2] || usMatch?.[4] || rfc2822Match?.[4])
+  )
   let month
   if (rfc2822Match !== null) {
     month = convertMonthName(rfc2822Match[3])
-  } else {
+  }
+  else {
     month = parseInt(intlMatch?.[3] || usMatch?.[1])
   }
   const day = parseInt(intlMatch?.[4] || usMatch?.[2] || rfc2822Match?.[2])
@@ -72,36 +92,24 @@ const Day = function (input, options = this || {}) {
   // '-2024-01-02' parses as '2024-01-02T06:00:00.000Z', while '01/02/-2024' is just invalid.
   const date = new Date(year, month - 1, day)
 
-  if (typeof max === 'string') {
-    max = Day(max, { name : `${name}' constraint 'max` }).getDate()
-  } else if (typeof max === 'number') {
-    max = new Date(max)
-  } else if (max !== undefined && max.isDayObject?.()) {
-    max = max.getDate()
-  } else if (max !== undefined && !(max instanceof Date)) {
-    throw new Error(`${selfDescription} constraint 'max' has nonconvertible type. Use 'string', 'number', 'Date', or 'Day'.`)
+  if (max !== undefined) {
+    max = convertToDay(max, name, 'max', status)
   }
-  if (typeof min === 'string') {
-    min = Day(min, { name : `${name}' constraint 'min` }).getDate()
-  } else if (typeof min === 'number') {
-    min = new Date(min)
-  } else if (min !== undefined && min.isDayObject?.()) {
-    min = min.getDate()
-  } else if (min !== undefined && !(min instanceof Date)) {
-    throw new Error(`${selfDescription} constraint 'min' has nonconvertible type. Use 'string', 'number', 'Date', or 'Day'.`)
+  if (min !== undefined) {
+    min = convertToDay(min, name, 'min', status)
   }
-  checkMaxMin({
-    input,
-    limitToString : (limit) => `${limit.getUTCFullYear()}/${('' + (limit.getUTCMonth() + 1)).padStart(2, '0')}/${('' + limit.getDate()).padStart(2, '0')}`,
-    max,
-    min,
-    selfDescription,
-    value         : date
-  })
+
+  checkMaxMin({ input, max, min, name, status, value : date })
 
   // The month can't overflow because we only accept valid months, so we just need to check the day of the month
   if (day !== date.getDate()) {
-    throw new Error(`${selfDescription} input '${input}' looks syntactically valid, but specifies an invalid day for the given month/year.`)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue :
+        'looks syntactically valid, but specifies an invalid day for the given month/year.',
+      status,
+    })
   }
 
   const value = createValue({ day, month, year, date })
@@ -114,13 +122,43 @@ const Day = function (input, options = this || {}) {
 Day.description = 'Day'
 Day.toString = () => Day.description
 
+const convertToDay = (value, name, constraint, status) => {
+  if (typeof value === 'string') {
+    return Day(value, { name : `${name}' constraint '${constraint}` })
+  }
+  else if (typeof value === 'number') {
+    const date = new Date(value)
+
+    return Day(
+      `${date.getUTCFullYear()}-${date.getUTCMonth() + 1}-${date.getUTCDate()}`
+    )
+  }
+  else if (value instanceof Date) {
+    return Day(
+      `${value.getUTCFullYear()}-${value.getUTCMonth() + 1}-${value.getUTCDate()}`
+    )
+  }
+  else if (!value.isDayObject?.()) {
+    throw new ArgumentTypeError({
+      argumentName : `${name}' constraint '${constraint}`,
+      arguemntType : "string'/'number'/'Date",
+      issue        : 'has nonconvertible type',
+      status,
+    })
+  } // else
+
+  return value
+}
+
 const createValue = ({ day, month, year, date }) => ({
   isDayObject   : () => true,
   getDayOfMonth : () => day,
   getMonth      : () => month,
   getYear       : () => year,
   getDate       : () => date,
-  valueOf       : () => date.getTime()
+  valueOf       : () => date.getTime(),
+  toString      : () =>
+    `${('' + year).padStart(2, '0')}-${('' + month).padStart(2, '0')}-${('' + day).padStart(2, '0')}`,
 })
 
 export { Day }

@@ -1,6 +1,6 @@
 import { getLatestTLDs, validateEmail } from 'true-email-validator'
+import { ArgumentInvalidError } from 'standard-error-set'
 
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 /**
@@ -51,6 +51,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.allowComments - If true, allows embedded comments in the address like '(comment)
  *   john@foo.com', which are disallowed by default. Note, the comments, if present, will be extracted regardless of
  *   this setting, the result `valid` field will just be set false and an issue will be reported.
@@ -102,11 +104,9 @@ import { typeChecks } from './lib/type-checks'
  * @returns {EmailData} Email data object.
  */
 const Email = function (input, options = this || {}) {
-  const { name } = options
+  const { name, status } = options
 
-  const selfDescription = describeInput('Email', name)
-
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name, status })
 
   if (options.validateValue !== undefined) {
     options.validateResult = options.validateValue
@@ -118,10 +118,16 @@ const Email = function (input, options = this || {}) {
   delete result.isValid
 
   if (isValid === false) {
-    if (issues.length === 0) { // shouldn't happen, but just in case
+    if (issues.length === 0) {
+      // shouldn't happen, but just in case
       issues.push('has unspecified issues')
     }
-    throw new Error(`${selfDescription} input '${input}' ${issues.join(', ')}.`)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : issues.join(', '),
+      status,
+    })
   }
 
   return result

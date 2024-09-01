@@ -1,10 +1,10 @@
-import { iso8601DateTimeRE, rfc2822DateRE } from 'regex-repo'
+import { ArgumentInvalidError, ArgumentTypeError } from 'standard-error-set'
+import { iso8601DateTimeRe, rfc2822DateRe } from 'regex-repo'
 
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { convertTimezoneOffsetToString } from './lib/date-time/convert-timezone-offset-to-string'
-import { describeInput } from './lib/describe-input'
 import { makeDateTimeString } from './lib/date-time/make-date-time-string'
 import { processIdiomaticDateTime } from './lib/date-time/process-idiomatic-date-time'
 import { processISO8601DateTime } from './lib/date-time/process-iso-8601-date-time'
@@ -40,6 +40,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string} options.localTimezone - For otherwise valid date time input with no time zone component, then the
  *   `localTimeZone` must be specified as an option. This value is only used if the timezone is not specified in the
  *   input string and any timezone specified in the input string will override this value.
@@ -55,59 +57,142 @@ import { typeChecks } from './lib/type-checks'
  * @returns {DateTimeData} The date-time data.
  */
 const DateTime = function (input, options = this || {}) {
-  const { name, localTimezone, noEOD } = options
+  // we deconstruct options here instead of in the function call because we use the options later to create the
+  // 'validationOptions'
+  const { name, localTimezone, noEOD, status = 400 } = options
   let { min, max } = options
 
-  const selfDescription = describeInput('Date-time', name)
-  typeChecks(input, selfDescription)
+  typeChecks({ input, name, status })
 
   let value
 
-  const iso8601Match = input.match(iso8601DateTimeRE)
+  const iso8601Match = input.match(iso8601DateTimeRe)
   if (iso8601Match !== null) {
-    value = createValue(processISO8601DateTime(selfDescription, iso8601Match, localTimezone))
+    value = createValue(
+      processISO8601DateTime(options, iso8601Match, localTimezone)
+    )
   }
 
-  const rfc2822Match = input.match(rfc2822DateRE)
+  const rfc2822Match = input.match(rfc2822DateRe)
   if (rfc2822Match !== null) {
-    value = createValue(processRFC2822DateTime(selfDescription, rfc2822Match, localTimezone))
+    value = createValue(
+      processRFC2822DateTime(options, rfc2822Match, localTimezone)
+    )
   }
 
   if (value === undefined) {
-    value = createValue(processIdiomaticDateTime(selfDescription, input, localTimezone))
+    value = createValue(processIdiomaticDateTime(options, input, localTimezone))
   }
 
   if (noEOD === true && value.isEOD() === true) {
-    throw new Error(`${selfDescription} does not allow special EOD time '24:00'.`)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : "uses disallowed special EOD time '24:00'",
+      status,
+    })
   }
 
-  const validationOptions = Object.assign({ input, selfDescription }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<date-time>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
-  // we compare DateTime objects so we can preserve the timezone in the `limitToString()` function. The problem is that
-  // when things are converted to `Date`, the original TZ is lost and `Date.getTimezoneOffset()` always shows the local
-  // offset, not the offset of the original date input itself.
+  // We compare DateTime objects so we can preserve the timezone. The problem is that when things are converted to
+  // `Date`, the original TZ is lost and `Date.getTimezoneOffset()` always shows the local offset, not the offset of
+  // the original date input itself.
   if (typeof max === 'string') {
-    max = DateTime(max, { name : `${name}' constraint 'max` })
-  } else if (typeof max === 'number') {
+    max = DateTime(max, {
+      name   : `${name}' constraint 'max`,
+      status : 500,
+    })
+  }
+  else if (typeof max === 'number') {
     const maxDate = new Date(max)
-    max = DateTime(makeDateTimeString([maxDate.getUTCFullYear(), maxDate.getUTCMonth() + 1, maxDate.getUTCDate(), maxDate.getUTCHours(), maxDate.getUTCMinutes(), maxDate.getUTCSeconds(), maxDate.getUTCMilliseconds() / 1000, 'Z']))
-  } else if (max instanceof Date) {
-    max = DateTime(makeDateTimeString([max.getUTCFullYear(), max.getUTCMonth() + 1, max.getUTCDate(), max.getUTCHours(), max.getUTCMinutes(), max.getUTCSeconds(), max.getUTCMilliseconds() / 1000, 'Z']))
-  } else if (max !== undefined && max.isDateTimeObject?.() !== true) {
-    throw new Error(`${selfDescription} constraint 'max' has nonconvertible type. Use 'string', 'number', 'Date', or 'DateTime'.`)
+    max = DateTime(
+      makeDateTimeString([
+        maxDate.getUTCFullYear(),
+        maxDate.getUTCMonth() + 1,
+        maxDate.getUTCDate(),
+        maxDate.getUTCHours(),
+        maxDate.getUTCMinutes(),
+        maxDate.getUTCSeconds(),
+        maxDate.getUTCMilliseconds() / 1000,
+        'Z',
+      ])
+    )
   }
+  else if (max instanceof Date) {
+    max = DateTime(
+      makeDateTimeString([
+        max.getUTCFullYear(),
+        max.getUTCMonth() + 1,
+        max.getUTCDate(),
+        max.getUTCHours(),
+        max.getUTCMinutes(),
+        max.getUTCSeconds(),
+        max.getUTCMilliseconds() / 1000,
+        'Z',
+      ])
+    )
+  }
+  else if (max !== undefined && max.isDateTimeObject?.() !== true) {
+    throw new ArgumentTypeError({
+      argumentName  : `${name}' constraint 'max`,
+      argumentValue : max,
+      issue         : 'is nonconvertible type',
+      hint          : "Use 'string', 'number', Date', or 'DateTime'.",
+      status        : 500,
+    })
+  }
+
   if (typeof min === 'string') {
-    min = DateTime(min, { name : `${name}' constraint 'min` })
-  } else if (typeof min === 'number') {
-    const minDate = new Date(min)
-    min = DateTime(makeDateTimeString([minDate.getUTCFullYear(), minDate.getUTCMonth() + 1, minDate.getUTCDate(), minDate.getUTCHours(), minDate.getUTCMinutes(), minDate.getUTCSeconds(), minDate.getUTCMilliseconds() / 1000, 'Z']))
-  } else if (min instanceof Date) {
-    min = DateTime(makeDateTimeString([min.getUTCFullYear(), min.getUTCMonth() + 1, min.getUTCDate(), min.getUTCHours(), min.getUTCMinutes(), min.getUTCSeconds(), min.getUTCMilliseconds() / 1000, 'Z']))
-  } else if (min !== undefined && min.isDateTimeObject?.() !== true) {
-    throw new Error(`${selfDescription} constraint 'min' has nonconvertible type. Use 'string', 'number', Date', or 'DateTime'.`)
+    min = DateTime(min, {
+      name   : `${name}' constraint 'min`,
+      status : 500,
+    })
   }
-  checkMaxMin({ input, limitToString, max, min, selfDescription, value })
+  else if (typeof min === 'number') {
+    const minDate = new Date(min)
+    min = DateTime(
+      makeDateTimeString([
+        minDate.getUTCFullYear(),
+        minDate.getUTCMonth() + 1,
+        minDate.getUTCDate(),
+        minDate.getUTCHours(),
+        minDate.getUTCMinutes(),
+        minDate.getUTCSeconds(),
+        minDate.getUTCMilliseconds() / 1000,
+        'Z',
+      ])
+    )
+  }
+  else if (min instanceof Date) {
+    min = DateTime(
+      makeDateTimeString([
+        min.getUTCFullYear(),
+        min.getUTCMonth() + 1,
+        min.getUTCDate(),
+        min.getUTCHours(),
+        min.getUTCMinutes(),
+        min.getUTCSeconds(),
+        min.getUTCMilliseconds() / 1000,
+        'Z',
+      ])
+    )
+  }
+  else if (min !== undefined && min.isDateTimeObject?.() !== true) {
+    // this is an argument error, yes
+    throw new ArgumentTypeError({
+      argumentName  : `${name}' constraint 'min`,
+      argumentValue : min,
+      issue         : 'is nonconvertible type',
+      hint          : "Use 'string', 'number', Date', or 'DateTime'.",
+      status        : 500,
+    })
+  }
+  checkMaxMin({ input, max, min, name, status, value })
 
   checkValidateValue(value, validationOptions)
 
@@ -117,22 +202,28 @@ const DateTime = function (input, options = this || {}) {
 DateTime.description = 'Date-time'
 DateTime.toString = () => DateTime.description
 
-const limitToString = (limit) => {
-  const year = limit.getYear()
-  const month = limit.getMonth()
-  const day = limit.getDayOfMonth()
-  const hours = limit.getHours()
-  const minutes = limit.getMinutes()
-  const seconds = limit.getSeconds()
-  const fracSeconds = limit.getFractionalSeconds()
-  const tz = convertTimezoneOffsetToString(limit.getTimezoneOffset())
-
-  return `${year}/${('' + month).padStart(2, '0')}/${('' + day).padStart(2, '0')} ${hours}:${('' + minutes).padStart(2, '0')}:${('' + seconds).padStart(2, '0')}${('' + fracSeconds).slice(1)} ${tz}`
-}
-
-const createValue = ([year, month, day, isEOD, hours, minutes, seconds, fracSeconds, timezoneOffset]) => {
+const createValue = ([
+  year,
+  month,
+  day,
+  isEOD,
+  hours,
+  minutes,
+  seconds,
+  fracSeconds,
+  timezoneOffset,
+]) => {
   const tz = convertTimezoneOffsetToString(timezoneOffset)
-  const dateString = makeDateTimeString([year, month, day, hours, minutes, seconds, fracSeconds, tz])
+  const dateString = makeDateTimeString([
+    year,
+    month,
+    day,
+    hours,
+    minutes,
+    seconds,
+    fracSeconds,
+    tz,
+  ])
   const date = new Date(dateString)
 
   return {
@@ -151,7 +242,18 @@ const createValue = ([year, month, day, isEOD, hours, minutes, seconds, fracSeco
     // we return epoch seconds rather than date so that '<' and similar work; the problem is they don't call 'valueOf()'
     // recursively, so if we returned a date, it would compare dates directly (which doesn't work) rather than
     // 'date.valueOf()'
-    valueOf              : () => date.getTime()
+    valueOf              : () => date.getTime(),
+    toString             : () =>
+      makeDateTimeString([
+        year,
+        month,
+        day,
+        hours,
+        minutes,
+        seconds,
+        fracSeconds,
+        tz,
+      ]),
   }
 }
 

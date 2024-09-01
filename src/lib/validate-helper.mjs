@@ -1,12 +1,27 @@
-const validateHelper = ({ type, validationFunc, validationArgs }) => {
+import { ArgumentInvalidError } from 'standard-error-set'
+
+const validateHelper = ({ validationArgs, validationFunc, validationType }) => {
   if (validationFunc === undefined) return
 
   const result = validationFunc(...validationArgs)
-  const { selfDescription, input } = validationArgs[1]
+  const { input, name, status, type } = validationArgs[1]
   if (typeof result === 'string') {
-    throw new Error(`${selfDescription} input '${input}' ${result}`)
-  } else if (result !== true) {
-    throw new Error(`${selfDescription} input '${input}' failed custom ${type} validation.`)
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentType  : type,
+      argumentValue : input,
+      issue         : result,
+      status,
+    })
+  }
+  else if (result !== true) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentType  : type,
+      argumentValue : input,
+      issue         : `failed custom ${validationType} validation`,
+      status,
+    })
   }
 }
 
