@@ -1,4 +1,9 @@
-const possibleBooleanValues = ({ noAbbreviations, noNumeric, noYesNo, treatNegativeValuesAsFalse }) => {
+const possibleBooleanValues = ({
+  noAbbreviations,
+  noNumeric,
+  noYesNo,
+  treatNegativeValuesAsFalse,
+}) => {
   let response = 'true/false'
   if (noAbbreviations !== true) {
     response += ', t/f'
@@ -16,6 +21,7 @@ const possibleBooleanValues = ({ noAbbreviations, noNumeric, noYesNo, treatNegat
     }
     response += '0/positive number'
   }
+
   return response.replace(/(.+),([^,]+)+$/, '$1, or$2')
 }
 

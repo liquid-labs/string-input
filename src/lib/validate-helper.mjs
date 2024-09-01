@@ -6,9 +6,22 @@ const validateHelper = ({ validationArgs, validationFunc, validationType }) => {
   const result = validationFunc(...validationArgs)
   const { input, name, status, type } = validationArgs[1]
   if (typeof result === 'string') {
-    throw new ArgumentInvalidError({ argumentName: name, argumentType: type, argumentValue: input, issue: result, status })
-  } else if (result !== true) {
-    throw new ArgumentInvalidError({ argumentName: name, argumentType: type, argumentValue: input, issue: `failed custom ${validationType} validation`, status })
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentType  : type,
+      argumentValue : input,
+      issue         : result,
+      status,
+    })
+  }
+  else if (result !== true) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentType  : type,
+      argumentValue : input,
+      issue         : `failed custom ${validationType} validation`,
+      status,
+    })
   }
 }
 

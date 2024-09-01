@@ -3,7 +3,6 @@ import { floatRe } from 'regex-repo'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { possibleBooleanValues } from './lib/possible-boolean-values'
 import { typeChecks } from './lib/type-checks'
 
@@ -13,7 +12,7 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.noAbbreviations = Disallow t/f/y/n responses.
  * @param {boolean} options.noNumeric - Disallow numeric answers.
@@ -33,76 +32,94 @@ const BooleanString = function (input, options = this || {}) {
     noNumeric = false,
     noYesNo = false,
     status,
-    treatNegativeValuesAsFalse = false
+    treatNegativeValuesAsFalse = false,
   } = options
 
-  const selfDescription = describeInput('Boolean', name)
   typeChecks({ input, name, status })
 
   input = input.toLowerCase()
 
-  if (noAbbreviations === true && (input === 't' || input === 'f' || input === 'y' || input === 'n')) {
-    throw new ArgumentInvalidError({ 
-      argumentName: name, 
-      argumentValue: input, 
-      issue: 'is disallowed abbreviated value', 
-      hint: `Use ${possibleBooleanValues(options)}.`,
-      status
+  if (
+    noAbbreviations === true
+    && (input === 't' || input === 'f' || input === 'y' || input === 'n')
+  ) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'is disallowed abbreviated value',
+      hint          : `Use ${possibleBooleanValues(options)}.`,
+      status,
     })
   }
 
-  if (noYesNo === true && (input === 'yes' || input === 'y' || input === 'no' || input === 'n')) {
-    throw new ArgumentInvalidError({ 
-      argumentName: name, 
-      argumentValue: input, 
-      issue: 'is disallowed yes/no value', 
-      hint: `Use ${possibleBooleanValues(options)}.`,
-      status
+  if (
+    noYesNo === true
+    && (input === 'yes' || input === 'y' || input === 'no' || input === 'n')
+  ) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'is disallowed yes/no value',
+      hint          : `Use ${possibleBooleanValues(options)}.`,
+      status,
     })
   }
 
   let value
   if (['true', 't', 'yes', 'y'].includes(input)) {
     value = true
-  } else if (['false', 'f', 'no', 'n'].includes(input)) {
+  }
+  else if (['false', 'f', 'no', 'n'].includes(input)) {
     value = false
-  } else {
+  }
+  else {
     const numericValue = Number.parseFloat(input)
     if (noNumeric === true && Number.isNaN(numericValue) === false) {
-      throw new ArgumentInvalidError({ 
-        argumentName: name, 
-        argumentValue: input, 
-        issue: 'is disallowed numeric value', 
-        hint: `Use ${possibleBooleanValues(options)}.`,
-        status
+      throw new ArgumentInvalidError({
+        argumentName  : name,
+        argumentValue : input,
+        issue         : 'is disallowed numeric value',
+        hint          : `Use ${possibleBooleanValues(options)}.`,
+        status,
       })
     }
-    else if (Number.isNaN(numericValue) === true ||
-      floatRe.test(input) !== true) { // parseFloat allows invalid input like '1.0' or '234abcd'
-      throw new ArgumentInvalidError({ 
-        argumentName: name, 
-        argumentValue: input, 
-        issue: 'could not be parsed as a boolean value', 
-        hint: `Use ${possibleBooleanValues(options)}.`,
-        status
+    else if (
+      Number.isNaN(numericValue) === true
+      || floatRe.test(input) !== true
+    ) {
+      // parseFloat allows invalid input like '1.0' or '234abcd'
+      throw new ArgumentInvalidError({
+        argumentName  : name,
+        argumentValue : input,
+        issue         : 'could not be parsed as a boolean value',
+        hint          : `Use ${possibleBooleanValues(options)}.`,
+        status,
       })
     }
-    if (numericValue === 0 || (treatNegativeValuesAsFalse === true && numericValue < 0)) {
+    if (
+      numericValue === 0
+      || (treatNegativeValuesAsFalse === true && numericValue < 0)
+    ) {
       value = false
-    } else if (numericValue > 0) {
+    }
+    else if (numericValue > 0) {
       value = true
-    } else {
-      throw new ArgumentInvalidError({ 
-        argumentName: name, 
-        argumentValue: input, 
-        issue: 'is ambiguous negative numeric value', 
-        hint: `Use ${possibleBooleanValues(options)}.`,
-        status
+    }
+    else {
+      throw new ArgumentInvalidError({
+        argumentName  : name,
+        argumentValue : input,
+        issue         : 'is ambiguous negative numeric value',
+        hint          : `Use ${possibleBooleanValues(options)}.`,
+        status,
       })
     }
   }
 
-  const validationOptions = Object.assign({ input, name, type: 'string<boolean>' }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<boolean>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
   checkValidateValue(value, validationOptions)
 

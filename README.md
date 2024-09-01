@@ -1,4 +1,5 @@
 # string-input
+
 [![coverage: 100%](./.readme-assets/coverage.svg)](https://github.com/liquid-labs/string-input/pulls?q=is%3Apr+is%3Aclosed) [![Unit tests](https://github.com/liquid-labs/string-input/actions/workflows/unit-tests-node.yaml/badge.svg)](https://github.com/liquid-labs/string-input/actions/workflows/unit-tests-node.yaml)
 
 A library to validate user input strings; compatible with command-line-args.
@@ -23,7 +24,7 @@ const csv = readFileSync(process.env.FILE_PATH, { encoding: 'utf8' })
 const lines = csv.split('\n') // of course in reality we'd use a library here
 
 for (const line of lines) {
-  const [ name, email, birthday ] = line.split(/\s*,\s*/)
+  const [name, email, birthday] = line.split(/\s*,\s*/)
   // validate contents
   Email(email)
   const bdayBoundary = new Date()
@@ -33,6 +34,7 @@ for (const line of lines) {
 ```
 
 With [command-line-args](https://github.com/75lb/command-line-args#readme) (or similar), you can make set the type options directly on the option specification:
+
 ```javascript
 import commandLineArgs from 'command-line-args'
 import { Day, Email, ValidatedString }
@@ -53,25 +55,23 @@ See notes on [invoking with context](#invoking-with-context)
 
 ## Custom validation functions
 
-All the type functions take `validateInput` and `validateValue` functions.
+Both `validateInput` and `validateValue` can be used for custom validation. `validateInput` looks at the original input and is called after all other input validations but before `input` is converted to `value`. `validateValue` is then called after any native value validations.
 
-These functions each take two arguments: either the original input or the processed value, respectively, and an options object containing `input` and `selfDescription` fields, plus all the original options passed into the type function or set on the context, if any. E.g.:
+These functions each take two arguments: either the original input or the processed value, respectively, and an options object containing all the original options passed into the type function or set on the context plus `input` (which is useful for `validateValue` which otherwise wouldn't see the original input), if any. E.g.:
+
 ```javascript
-const options = { 
-  name: 'email', 
-  noPlusEmails: true, 
+const options = {
+  name: 'email',
+  noPlusEmails: true,
   propertyForValidationFunction: 'BAIL OUT!',
-  validateInput: (input, { name, selfDescription, propertyForValidationFunction }) => {
+  validateInput: (input, { propertyForValidationFunction }) => {
     if (propertyForValidationFunction === 'BAIL OUT!') {
-      return `${selfDescription} input '${name}' is bailing out!`
+      // on error, we return the 'issue description', which will be used to construct an error message that 
+      // incorporates the argument name and value
+      return `is bailing out`
     }
-  }
+  },
 }
-// 'validateInput' will see all the original options, plus 'input' and 'selfDescription`
-Email('foo@bar.com', options)
-// or
-// options.type = Email
-// options.type('foo@bar.com')
 ```
 
 The validate functions _must_ return `true` if validated. Any non-`true` result is treated as indicative of failure. If the validation function returns a string, than that is treated as an explanation of the issue and it is embedded in a string like: `${type} ${name} input '${input} ${result}.` E.g., if our validation function returns 'contains offensive words', then the error message raised would be something like, "Email personalEmail input 'asshat@foo.com' contains offensive words."
@@ -79,8 +79,9 @@ The validate functions _must_ return `true` if validated. Any non-`true` result 
 ## Invoking with context
 
 All the functions will take their options either 1) passed in as the second argument or 2) from the `this` context (passed in options override `this` options). This allows you do something like:
+
 ```javascript
-const context = { allowQuotedLocalPart : true, type: Email }
+const context = { allowQuotedLocalPart: true, type: Email }
 context.type('"quoted local part"@foo.com') // is valid because `context` is treated as `this`
 ```
 
@@ -121,7 +122,7 @@ and false/f/no/n/0 as `false` (case insensitive).
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.noAbbreviations` | `boolean` |  | = Disallow t/f/y/n responses. |
 | `options.noNumeric` | `boolean` |  | Disallow numeric answers. |
 | `options.noYesNo` | `boolean` |  | Disallow yes/no/y/n responses. |
@@ -142,7 +143,7 @@ Validates an input string as a syntactically valid card number.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.iins` | `Array.<string>` |  | A list of acceptable Industry Identifier Numbers, or initial card numbers. E.g.,   iins : ['123']` would only accept cards with an account number starting with '123'. If left undefined, then all   otherwise valid card numbers are treated as valid. |
 | `options.length` | `Array.<number>` |  | An array of integers defining acceptable card lengths. The default value is any   length between 12 and 19, inclusive.` |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
@@ -164,7 +165,7 @@ order.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.localTimezone` | `string` |  | For otherwise valid date time input with no time zone component, then the   `localTimeZone` must be specified as an option. This value is only used if the timezone is not specified in the   input string and any timezone specified in the input string will override this value. |
 | `options.min` | `string` \| `number` \| `Date` |  | The earliest valid time, inclusive. This may be specified as any string   parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
 | `options.max` | `string` \| `number` \| `Date` |  | The latest valid time, inclusive. This may be specified as any string   parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
@@ -188,7 +189,7 @@ delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
 | `options.max` | `string` \| `number` \| `Date` |  | The latest day to be considered valid. |
 | `options.min` | `string` \| `number` \| `Date` |  | The earliest day to be considered valid. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 | `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 
@@ -205,7 +206,7 @@ Validates the input as a valid EIN.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 | `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 
@@ -242,7 +243,7 @@ This type uses [true-email-validator](https://github.com/liquid-labs/true-email-
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowComments` | `boolean` |  | If true, allows embedded comments in the address like '(comment)   john@foo.com', which are disallowed by default. Note, the comments, if present, will be extracted regardless of   this setting, the result `valid` field will just be set false and an issue will be reported. |
 | `options.allowAnyDomain` | `boolean` |  | If true, then overrides all default restrictions and format checks of the   domain value and allows any syntactically valid domain value except a localhost name or address (unless   `allowLocalHost` is also set true). Note that impossible sub-domain labels (e.g., a label more than 63 characters   long or a single digit) or TLDs (e.g. '123') will still trigger an invalid result. Otherwise, the domain value is   verified as recognizable as a domain name (as opposed to an IP address, for instance). |
 | `options.allowAnyDomainLiteral` | `boolean` |  | If true, then overrides default restrictions and format checks of   domain literal values and allows any syntactically valid domain literal value that is not a localhost address (   unless `allowLocalhost` is also true). In general, domain literal values point to IPV4/6 addresses and the   validation will (when `allowIP4` and/or`allowIPV6` are true), allow valid IP address values but would reject other   domain literal values, unless this value is set true. Note, if this value is true then allowIPV4` and `allowIPV6`   are essentially ignored. |
@@ -265,7 +266,7 @@ This type uses [true-email-validator](https://github.com/liquid-labs/true-email-
 **Returns**: [`EmailData`](#EmailData) - Email data object.
 
 <a id="getLatestTLDs"></a>
-### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L154)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L153)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
 International domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain will be
@@ -288,7 +289,7 @@ Parses and validates an input string as an integer.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowLeadingZeros` | `boolean` |  | Overrides default behavior which rejects strings with leading zeros. |
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not itself be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
@@ -309,7 +310,7 @@ Parses and validates an input string as a valid number (float).
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowLeadingZeros` | `boolean` |  | Overrides default behavior which rejects strings with leading zeros. |
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
@@ -330,7 +331,7 @@ Parses and validates a string as a valid Social Security Number, with our withou
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 | `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 
@@ -348,7 +349,7 @@ ambiguous, this type does not recognize nor accepts timezone specification.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.max` | `string` |  | A string, parseable by this function, representing the latest valid time. |
 | `options.min` | `string` |  | A string, parseable by this function, representing the earliest valid time. |
 | `options.noEOD` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
@@ -368,7 +369,7 @@ Validates a string according to the provided options. This is useful when there'
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.    This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.after` | `string` |  | The input must be or lexicographically sort after this string. |
 | `options.before` | `string` |  | The input must be or lexicographically sort before this string. |
 | `options.endsWith` | `string` |  | The input string must end with the indicated string. |

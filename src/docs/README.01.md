@@ -1,4 +1,5 @@
 # string-input
+
 [![coverage: 100%](./.readme-assets/coverage.svg)](https://github.com/liquid-labs/string-input/pulls?q=is%3Apr+is%3Aclosed) [![Unit tests](https://github.com/liquid-labs/string-input/actions/workflows/unit-tests-node.yaml/badge.svg)](https://github.com/liquid-labs/string-input/actions/workflows/unit-tests-node.yaml)
 
 A library to validate user input strings; compatible with command-line-args.
@@ -23,7 +24,7 @@ const csv = readFileSync(process.env.FILE_PATH, { encoding: 'utf8' })
 const lines = csv.split('\n') // of course in reality we'd use a library here
 
 for (const line of lines) {
-  const [ name, email, birthday ] = line.split(/\s*,\s*/)
+  const [name, email, birthday] = line.split(/\s*,\s*/)
   // validate contents
   Email(email)
   const bdayBoundary = new Date()
@@ -33,6 +34,7 @@ for (const line of lines) {
 ```
 
 With [command-line-args](https://github.com/75lb/command-line-args#readme) (or similar), you can make set the type options directly on the option specification:
+
 ```javascript
 import commandLineArgs from 'command-line-args'
 import { Day, Email, ValidatedString }
@@ -53,25 +55,23 @@ See notes on [invoking with context](#invoking-with-context)
 
 ## Custom validation functions
 
-All the type functions take `validateInput` and `validateValue` functions.
+Both `validateInput` and `validateValue` can be used for custom validation. `validateInput` looks at the original input and is called after all other input validations but before `input` is converted to `value`. `validateValue` is then called after any native value validations.
 
-These functions each take two arguments: either the original input or the processed value, respectively, and an options object containing `input` and `selfDescription` fields, plus all the original options passed into the type function or set on the context, if any. E.g.:
+These functions each take two arguments: either the original input or the processed value, respectively, and an options object containing all the original options passed into the type function or set on the context plus `input` (which is useful for `validateValue` which otherwise wouldn't see the original input), if any. E.g.:
+
 ```javascript
-const options = { 
-  name: 'email', 
-  noPlusEmails: true, 
+const options = {
+  name: 'email',
+  noPlusEmails: true,
   propertyForValidationFunction: 'BAIL OUT!',
-  validateInput: (input, { name, selfDescription, propertyForValidationFunction }) => {
+  validateInput: (input, { propertyForValidationFunction }) => {
     if (propertyForValidationFunction === 'BAIL OUT!') {
-      return `${selfDescription} input '${name}' is bailing out!`
+      // on error, we return the 'issue description', which will be used to construct an error message that
+      // incorporates the argument name and value
+      return `is bailing out`
     }
-  }
+  },
 }
-// 'validateInput' will see all the original options, plus 'input' and 'selfDescription`
-Email('foo@bar.com', options)
-// or
-// options.type = Email
-// options.type('foo@bar.com')
 ```
 
 The validate functions _must_ return `true` if validated. Any non-`true` result is treated as indicative of failure. If the validation function returns a string, than that is treated as an explanation of the issue and it is embedded in a string like: `${type} ${name} input '${input} ${result}.` E.g., if our validation function returns 'contains offensive words', then the error message raised would be something like, "Email personalEmail input 'asshat@foo.com' contains offensive words."
@@ -79,8 +79,9 @@ The validate functions _must_ return `true` if validated. Any non-`true` result 
 ## Invoking with context
 
 All the functions will take their options either 1) passed in as the second argument or 2) from the `this` context (passed in options override `this` options). This allows you do something like:
+
 ```javascript
-const context = { allowQuotedLocalPart : true, type: Email }
+const context = { allowQuotedLocalPart: true, type: Email }
 context.type('"quoted local part"@foo.com') // is valid because `context` is treated as `this`
 ```
 

@@ -1,10 +1,10 @@
 import { ArgumentOutOfRangeError } from 'standard-error-set'
 
-const checkMaxMin = ({ input, limitToString = (limit) => limit, max, min, name, status, value }) => {
+const checkMaxMin = ({ max, min, name, status, value }) => {
   if (max !== undefined && value > max) {
     throw new ArgumentOutOfRangeError({
-      argumentName: `${name}' constraint 'max`,
-      argumentValue: max,
+      argumentName  : `${name}' constraint 'max`,
+      argumentValue : max,
       max,
       min,
       status,
@@ -12,8 +12,8 @@ const checkMaxMin = ({ input, limitToString = (limit) => limit, max, min, name, 
   }
   if (min !== undefined && value < min) {
     throw new ArgumentOutOfRangeError({
-      argumentName: `${name}' constraint 'min`,
-      argumentValue: min,
+      argumentName  : `${name}' constraint 'min`,
+      argumentValue : min,
       max,
       min,
       status,

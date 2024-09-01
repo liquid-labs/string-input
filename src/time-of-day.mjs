@@ -4,7 +4,6 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 /**
@@ -27,7 +26,7 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string} options.max - A string, parseable by this function, representing the latest valid time.
  * @param {string} options.min - A string, parseable by this function, representing the earliest valid time.
@@ -42,30 +41,46 @@ const TimeOfDay = function (input, options = this || {}) {
   const { name, noEOD, status } = options
   let { min, max } = options
 
-  const selfDescription = describeInput('Time of day', name)
   typeChecks({ input, name, status })
 
   const militaryTimeMatch = input.match(militaryTimeRe)
   const timeMatch = input.match(timeRe)
   const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRe)
 
-  if (militaryTimeMatch === null && timeMatch === null && twentyFourHourTimeMatch === null) {
-    throw new ArgumentInvalidError({ 
-      argumentName: name, 
-      argumentValue: input, 
-      issue: 'not recognized as either military, standard, or 24-hour time'
+  if (
+    militaryTimeMatch === null
+    && timeMatch === null
+    && twentyFourHourTimeMatch === null
+  ) {
+    throw new ArgumentInvalidError({
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'not recognized as either military, standard, or 24-hour time',
     })
   }
 
-  const isEOD = militaryTimeMatch?.[1] !== undefined || twentyFourHourTimeMatch?.[1] !== undefined
+  const isEOD =
+    militaryTimeMatch?.[1] !== undefined
+    || twentyFourHourTimeMatch?.[1] !== undefined
   if (noEOD === true) {
-    throw new ArgumentInvalidError({ argumentName: name, issue: "special 'end-of-day' time disallowed" })
+    throw new ArgumentInvalidError({
+      argumentName : name,
+      issue        : "special 'end-of-day' time disallowed",
+    })
   }
 
-  const validationOptions = Object.assign({ input, name, type: 'string<time>' }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<time>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
-  const value = getValue({ isEOD, militaryTimeMatch, timeMatch, twentyFourHourTimeMatch })
+  const value = getValue({
+    isEOD,
+    militaryTimeMatch,
+    timeMatch,
+    twentyFourHourTimeMatch,
+  })
 
   if (max !== undefined) {
     max = TimeOfDay(max, { name : `${name}' constraint 'max` })
@@ -74,41 +89,43 @@ const TimeOfDay = function (input, options = this || {}) {
   if (min !== undefined) {
     min = TimeOfDay(min, { name : `${name}' constraint 'min` })
   }
-  checkMaxMin({ input, limitToString : limitDescriptor, max, min, name, status, value })
+  checkMaxMin({ input, max, min, name, status, value })
 
   checkValidateValue(value, validationOptions)
 
   return value
 }
 
-const limitDescriptor = (limit) => {
-  const hours = limit.getHours()
-  const minutes = limit.getMinutes()
-  const seconds = limit.getSeconds()
-  const fracSeconds = limit.getFractionalSeconds()
-
-  return `${hours}:${('' + minutes).padStart(2, '0')}:${('' + seconds).padStart(2, '0')}${('' + fracSeconds).slice(1)}`
-}
-
-const getValue = ({ isEOD, militaryTimeMatch, timeMatch, twentyFourHourTimeMatch }) => {
+const getValue = ({
+  isEOD,
+  militaryTimeMatch,
+  timeMatch,
+  twentyFourHourTimeMatch,
+}) => {
   let hours, minutes, seconds, fracSeconds
   if (isEOD === true) {
     hours = 24
     minutes = 0
     seconds = 0
     fracSeconds = 0
-  } else {
+  }
+  else {
     if (timeMatch !== null) {
-      hours = parseInt(timeMatch[1]) + (timeMatch[5].toLowerCase() === 'pm' ? 12 : 0)
+      hours =
+        parseInt(timeMatch[1]) + (timeMatch[5].toLowerCase() === 'pm' ? 12 : 0)
       if (hours === 24) {
         hours = 0
       }
-    } else {
+    }
+    else {
       hours = parseInt(militaryTimeMatch?.[2] || twentyFourHourTimeMatch?.[2])
     }
-    minutes = parseInt(timeMatch?.[2] || militaryTimeMatch?.[3] || twentyFourHourTimeMatch?.[3])
+    minutes = parseInt(
+      timeMatch?.[2] || militaryTimeMatch?.[3] || twentyFourHourTimeMatch?.[3]
+    )
     seconds = parseInt(timeMatch?.[3] || twentyFourHourTimeMatch?.[4] || '0')
-    const fracSecondsString = timeMatch?.[4] || twentyFourHourTimeMatch?.[5] || '0'
+    const fracSecondsString =
+      timeMatch?.[4] || twentyFourHourTimeMatch?.[5] || '0'
     fracSeconds = Number('0.' + fracSecondsString)
   }
 
@@ -118,17 +135,18 @@ const getValue = ({ isEOD, militaryTimeMatch, timeMatch, twentyFourHourTimeMatch
     getMinutes           : () => minutes,
     getSeconds           : () => seconds,
     getFractionalSeconds : () => fracSeconds,
-    valueOf              : () => (hours * 60 * 60) + (minutes * 60) + seconds + fracSeconds,
-    toString : () => {
-      let time = `${('' + (hours)).padStart(2, '0')}:${('' + (minutes || '00')).padStart(2, '0')}`
+    valueOf              : () => hours * 60 * 60 + minutes * 60 + seconds + fracSeconds,
+    toString             : () => {
+      let time = `${('' + hours).padStart(2, '0')}:${('' + (minutes || '00')).padStart(2, '0')}`
       if (seconds > 0 || fracSeconds > 0) {
         time += ('' + (seconds || '00')).padStart(2, '0')
         if (fracSeconds !== undefined) {
           time += fracSeconds
         }
       }
+
       return time
-    }
+    },
   }
 }
 

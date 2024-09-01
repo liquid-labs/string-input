@@ -1,9 +1,8 @@
-import { ArgumentInvalidError, SystemError } from 'standard-error-set'
+import { ArgumentInvalidError } from 'standard-error-set'
 import luhn from 'luhn'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 const seps = '[ -]'
@@ -15,7 +14,7 @@ const rawNumberRE = new RegExp(seps, 'g')
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string[]} options.iins - A list of acceptable Industry Identifier Numbers, or initial card numbers. E.g.,
  *   iins : ['123']` would only accept cards with an account number starting with '123'. If left undefined, then all
@@ -36,15 +35,14 @@ const CardNumber = function (input, options = this || {}) {
     status,
   } = options
 
-  const selfDescription = describeInput('Card number', name)
   typeChecks({ input, name, status })
 
   if (formattedNumberRE.test(input) === false) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: 'does not appear to be a card number',
-      hint: "Expects a number with optional dashes ('-') or spaces (' ').",
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'does not appear to be a card number',
+      hint          : "Expects a number with optional dashes ('-') or spaces (' ').",
       status,
     })
   }
@@ -52,72 +50,84 @@ const CardNumber = function (input, options = this || {}) {
   const numberString = input.replaceAll(rawNumberRE, '')
   if (lengths !== undefined && !lengths.includes(numberString.length)) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: 'is an invalid length',
-      hint: `Card number must be ${lengths.join(', ')} digits long.`,
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'is an invalid length',
+      hint          : `Card number must be ${lengths.join(', ')} digits long.`,
       status,
     })
   }
 
-  if (iins !== undefined && iins.some((iin) => {
-    if (iin.test !== undefined) {
-      if (!iin.toString().startsWith('/^')) {
-        throw new ArgumentInvalidError({
-          argumentName : `${name}' constraint 'iins`,
-          argumentValue: iin,
-          issue: 'is invalid; regular expression must be pinned to the start of string',
-          hint: `Start regular expression with '^'.`,
-          status: 500,
-        })
+  if (
+    iins !== undefined
+    && iins.some((iin) => {
+      if (iin.test !== undefined) {
+        if (!iin.toString().startsWith('/^')) {
+          throw new ArgumentInvalidError({
+            argumentName  : `${name}' constraint 'iins`,
+            argumentValue : iin,
+            issue :
+              'is invalid; regular expression must be pinned to the start of string',
+            hint   : "Start regular expression with '^'.",
+            status : 500,
+          })
+        }
+
+        return iin.test(numberString)
+      } // else
+      const range = ('' + iin).split('-')
+      if (range.length === 1) {
+        return numberString.startsWith(range[0])
       }
-      return iin.test(numberString)
-    } // else
-    const range = ('' + iin).split('-')
-    if (range.length === 1) {
-      return numberString.startsWith(range[0])
-    } else if (range.length === 2) {
-      const matchLength = range[0].length
-      if (range[1].length !== matchLength) {
+      else if (range.length === 2) {
+        const matchLength = range[0].length
+        if (range[1].length !== matchLength) {
+          throw new ArgumentInvalidError({
+            argumentName  : `${name}' constraint 'iins`,
+            argumentValue : iin,
+            issue :
+              'contains an invalid range; both the min and max must specify the same number of digits',
+            status : 500,
+          })
+        }
+        const min = parseInt(range[0])
+        const max = parseInt(range[1])
+        const matchBit = numberString.slice(0, matchLength)
+        const matchNumber = parseInt(matchBit)
+
+        return matchNumber >= min && matchNumber <= max
+      }
+      else {
         throw new ArgumentInvalidError({
-          argumentName : `${name}' constraint 'iins`,
+          argumentName  : `${name}' constraint 'iins`,
           argumentValue : iin,
-          issue: 'contains an invalid range; both the min and max must specify the same number of digits',
-          status: 500,
+          issue         : 'contains an invalid range',
+          status        : 500,
         })
       }
-      const min = parseInt(range[0])
-      const max = parseInt(range[1])
-      const matchBit = numberString.slice(0, matchLength)
-      const matchNumber = parseInt(matchBit)
-      return matchNumber >= min && matchNumber <= max
-    } else {
-      throw new ArgumentInvalidError({
-        argumentName : `${name}' constraint 'iins`,
-        argumentValue : iin,
-        issue: 'contains an invalid range',
-        status: 500,
-      })
-    }
-  }) !== true) {
+    }) !== true
+  ) {
     throw new ArgumentInvalidError({
-      argumentName : `${name}' constraint 'iins`,
+      argumentName  : `${name}' constraint 'iins`,
       argumentValue : iins,
-      issue: 'contains a non-accepted Issuer Identifier Number (IIN)',
-      status: 500,
+      issue         : 'contains a non-accepted Issuer Identifier Number (IIN)',
+      status        : 500,
     })
   }
 
-  const validationOptions = Object.assign({ input, name, type: 'string<card number>' }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<card number>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
   if (luhn.validate(numberString) !== true) {
     throw new ArgumentInvalidError({
-      argumentName : name,
+      argumentName  : name,
       argumentValue : input,
-      issue: 'failed the check-digit validation',
-      hint: 'Check input for typos.',
-      status
+      issue         : 'failed the check-digit validation',
+      hint          : 'Check input for typos.',
+      status,
     })
   }
 

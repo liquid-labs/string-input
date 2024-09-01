@@ -14,7 +14,7 @@ const validInput = [
   ['foo', { minLength : 3 }],
   ['foo', { oneOf : ['foo', 'bar'] }],
   ['foo', { validateInput : (input) => input.startsWith('f') }],
-  ['foo', { validateValue : (value) => value.startsWith('f') }]
+  ['foo', { validateValue : (value) => value.startsWith('f') }],
 ]
 
 const failureInput = [
@@ -26,19 +26,40 @@ const failureInput = [
   ['foo', { maxLength : 2 }, 'may be no more than 2 characters long'],
   ['foo', { minLength : 4 }, 'must be at least 4 characters long'],
   ['foo', { oneOf : ['a', 'b'] }, "must be one of 'a', 'b'"],
-  ['foo', { validateInput : (input) => input.startsWith('a') }, 'failed custom input validation'],
-  ['foo', { validateValue : (value) => value.startsWith('a') }, 'failed custom value validation']
-].map((params) => { params[1].name = 'bar'; params[2] = "argument 'bar'.*?" + params[2]; return params })
+  [
+    'foo',
+    { validateInput : (input) => input.startsWith('a') },
+    'failed custom input validation',
+  ],
+  [
+    'foo',
+    { validateValue : (value) => value.startsWith('a') },
+    'failed custom value validation',
+  ],
+].map((params) => {
+  params[1].name = 'bar'
+  params[2] = "argument 'bar'.*?" + params[2]
+
+  return params
+})
 
 describe('ValidatedString', () => {
-  test.each(validInput)('%s with options %p passes',
-    (input, options) => expect(ValidatedString(input, options)).toBe(input))
+  test.each(validInput)('%s with options %p passes', (input, options) =>
+    expect(ValidatedString(input, options)).toBe(input))
 
-  test.each(failureInput)('%s and options %p throws error matching %s', (input, options, errorMatch) =>
-    expect(() => ValidatedString(input, options)).toThrow(new RegExp(errorMatch)))
+  test.each(failureInput)(
+    '%s and options %p throws error matching %s',
+    (input, options, errorMatch) =>
+      expect(() => ValidatedString(input, options)).toThrow(
+        new RegExp(errorMatch)
+      )
+  )
 
-  test.each(failureInput)('%s and context %p throws error matching %s', (input, context, errorMatch) => {
-    context.type = ValidatedString
-    expect(() => context.type(input)).toThrow(new RegExp(errorMatch))
-  })
+  test.each(failureInput)(
+    '%s and context %p throws error matching %s',
+    (input, context, errorMatch) => {
+      context.type = ValidatedString
+      expect(() => context.type(input)).toThrow(new RegExp(errorMatch))
+    }
+  )
 })

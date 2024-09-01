@@ -13,6 +13,7 @@ describe('convertMonthName', () => {
     ['Sep', 9],
     ['Oct', 10],
     ['Nov', 11],
-    ['Dec', 12]
-  ])('%s => %s', (monthName, result) => expect(convertMonthName(monthName)).toBe(result))
+    ['Dec', 12],
+  ])('%s => %s', (monthName, result) =>
+    expect(convertMonthName(monthName)).toBe(result))
 })

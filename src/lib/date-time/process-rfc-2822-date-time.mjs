@@ -11,10 +11,28 @@ const processRFC2822DateTime = (options, rfc2822Match, localTimezone) => {
   const seconds = parseInt(rfc2822Match[7])
   const timezone = rfc2822Match[8] || localTimezone
 
-  const timezoneOffset =
-    getTimezoneOffset(options, [year, month, day, hours, minutes, seconds, 0, timezone])
+  const timezoneOffset = getTimezoneOffset(options, [
+    year,
+    month,
+    day,
+    hours,
+    minutes,
+    seconds,
+    0,
+    timezone,
+  ])
 
-  return [year, month, day, /* isEOD */ false, hours, minutes, seconds, 0, timezoneOffset]
+  return [
+    year,
+    month,
+    day,
+    /* isEOD */ false,
+    hours,
+    minutes,
+    seconds,
+    0,
+    timezoneOffset,
+  ]
 }
 
 export { processRFC2822DateTime }

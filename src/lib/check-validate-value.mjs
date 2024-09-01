@@ -2,9 +2,9 @@ import { validateHelper } from './validate-helper'
 
 const checkValidateValue = (value, options = {}) => {
   validateHelper({
-    validationType           : 'value',
+    validationType : 'value',
     validationFunc : options.validateValue,
-    validationArgs : [value, options]
+    validationArgs : [value, options],
   })
 }
 

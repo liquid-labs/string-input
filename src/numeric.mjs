@@ -3,7 +3,6 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 const leadingZeroRE = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and '0.xx'
@@ -13,7 +12,7 @@ const leadingZeroRE = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.allowLeadingZeros - Overrides default behavior which rejects strings with leading zeros.
  * @param {number} options.divisibleBy - Requires the resulting integer value be divisible by the indicated number (
@@ -29,37 +28,40 @@ const leadingZeroRE = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and
 const Numeric = function (input, options = this || {}) {
   const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
 
-  const selfDescription = describeInput('Numeric', name)
   typeChecks({ input, name, status })
 
   if (allowLeadingZeros !== true && leadingZeroRE.test(input) === true) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: 'contains disallowed leading zeros',
-      status
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'contains disallowed leading zeros',
+      status,
     })
-  } else if (input !== input.trim()) {
+  }
+  else if (input !== input.trim()) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: 'contains disallowed leading or trailing space',
-      status
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'contains disallowed leading or trailing space',
+      status,
     })
   }
 
-  const validationOptions = Object.assign({ input, name, type: 'string<numeric>' }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<numeric>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
   const value = Number(input)
   // TODO: wrap these two together in 'checkNumerics' and share with Integer
   checkMaxMin({ input, max, min, name, status, value })
-  if (divisibleBy !== undefined && (value % divisibleBy) !== 0) {
+  if (divisibleBy !== undefined && value % divisibleBy !== 0) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: `must be divisible by '${divisibleBy}'`,
-      status
+      argumentName  : name,
+      argumentValue : input,
+      issue         : `must be divisible by '${divisibleBy}'`,
+      status,
     })
   }
 

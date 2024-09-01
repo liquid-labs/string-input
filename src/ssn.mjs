@@ -3,7 +3,6 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { describeInput } from './lib/describe-input'
 import { typeChecks } from './lib/type-checks'
 
 /**
@@ -11,7 +10,7 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
  *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
@@ -22,19 +21,21 @@ import { typeChecks } from './lib/type-checks'
 const SSN = function (input, options = this || {}) {
   const { name, status } = options
 
-  const selfDescription = describeInput('SSN', name)
   typeChecks({ input, name, status })
 
   const ssnMatch = input.match(ssnRe)
   if (ssnMatch === null) {
     throw new ArgumentInvalidError({
-      argumentName: name,
-      argumentValue: input,
-      issue: 'is not a valid SSN',
-      status: 'Ensure there are nine digits and a valid area code.'
+      argumentName  : name,
+      argumentValue : input,
+      issue         : 'is not a valid SSN',
+      status        : 'Ensure there are nine digits and a valid area code.',
     })
   }
-  const validationOptions = Object.assign({ input, name, type: 'string<SSN>' }, options)
+  const validationOptions = Object.assign(
+    { input, name, type : 'string<SSN>' },
+    options
+  )
   checkValidateInput(input, validationOptions)
 
   const value = `${ssnMatch[1]}-${ssnMatch[2]}-${ssnMatch[3]}`
