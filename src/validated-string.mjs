@@ -108,10 +108,11 @@ const ValidatedString = function (input, options = this || {}) {
   }
 
   if (oneOf !== undefined && !oneOf.includes(input)) {
+    const issue = 'must be ' + (oneOf.length === 1 ? `'${oneOf[0]}'` : `one of '${oneOf.join("', '")}'`)
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,
-      issue         : `must be one of '${oneOf.join("', '")}'`,
+      issue,
       status,
     })
   }

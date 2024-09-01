@@ -25,6 +25,7 @@ const failureInput = [
   ['foo', { matchRe : 'bar' }, 'must match /bar/'],
   ['foo', { maxLength : 2 }, 'may be no more than 2 characters long'],
   ['foo', { minLength : 4 }, 'must be at least 4 characters long'],
+  ['foo', { oneOf : ['a'] }, "must be 'a'"],
   ['foo', { oneOf : ['a', 'b'] }, "must be one of 'a', 'b'"],
   [
     'foo',
