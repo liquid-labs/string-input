@@ -66,7 +66,7 @@ const options = {
   propertyForValidationFunction: 'BAIL OUT!',
   validateInput: (input, { propertyForValidationFunction }) => {
     if (propertyForValidationFunction === 'BAIL OUT!') {
-      // on error, we return the 'issue description', which will be used to construct an error message that 
+      // on error, we return the 'issue description', which will be used to construct an error message that
       // incorporates the argument name and value
       return `is bailing out`
     }
@@ -111,7 +111,7 @@ _API generated with [dmd-readme-api](https://www.npmjs.com/package/dmd-readme-ap
   - [`TimeData`](#TimeData): Represents the time components.
 
 <a id="BooleanString"></a>
-### `BooleanString(input, options)` ⇒ `boolean` <sup>↱<sup>[source code](./src/boolean-string.mjs#L29)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `BooleanString(input, options)` ⇒ `boolean` <sup>↱<sup>[source code](./src/boolean-string.mjs#L28)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as a boolean. By default recognizes true/t/yes/y/any positive number as `true`
 and false/f/no/n/0 as `false` (case insensitive).
@@ -133,7 +133,7 @@ and false/f/no/n/0 as `false` (case insensitive).
 **Returns**: `boolean` - A primitive boolean.
 
 <a id="CardNumber"></a>
-### `CardNumber(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/card-number.mjs#L31)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `CardNumber(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/card-number.mjs#L30)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Validates an input string as a syntactically valid card number.
 
@@ -176,7 +176,7 @@ order.
 **Returns**: [`DateTimeData`](#DateTimeData) - The date-time data.
 
 <a id="Day"></a>
-### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L40)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L39)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates input string as a specific day (date). Can handle year first and US format, with or without
 delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
@@ -196,7 +196,7 @@ delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
 **Returns**: [`DayData`](#DayData) - The day/date data.
 
 <a id="EIN"></a>
-### `EIN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ein.mjs#L22)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `EIN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ein.mjs#L21)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Validates the input as a valid EIN.
 
@@ -213,7 +213,7 @@ Validates the input as a valid EIN.
 **Returns**: `string` - A canonically formatted EIN 'XX-XXXXXXX'.
 
 <a id="Email"></a>
-### `Email(input, options)` ⇒ [`EmailData`](#EmailData) <sup>↱<sup>[source code](./src/email.mjs#L107)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Email(input, options)` ⇒ [`EmailData`](#EmailData) <sup>↱<sup>[source code](./src/email.mjs#L106)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as a valid email address according to RFC 5322 (email messaging), RFC 6531/6532
 (internationalized email), and RFC 5890 (internationalized domain names). Validation happens in two general steps.
@@ -266,7 +266,7 @@ This type uses [true-email-validator](https://github.com/liquid-labs/true-email-
 **Returns**: [`EmailData`](#EmailData) - Email data object.
 
 <a id="getLatestTLDs"></a>
-### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L153)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L152)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
 International domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain will be
@@ -279,7 +279,7 @@ be passed to the `Email` ``
   rfc4343).
 
 <a id="Integer"></a>
-### `Integer(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/integer.mjs#L30)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Integer(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/integer.mjs#L29)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as an integer.
 
@@ -300,7 +300,7 @@ Parses and validates an input string as an integer.
 **Returns**: `number` - A primitive integer.
 
 <a id="Numeric"></a>
-### `Numeric(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/numeric.mjs#L29)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Numeric(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/numeric.mjs#L28)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as a valid number (float).
 
@@ -321,7 +321,7 @@ Parses and validates an input string as a valid number (float).
 **Returns**: `number` - A primitive number.
 
 <a id="SSN"></a>
-### `SSN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ssn.mjs#L22)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `SSN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ssn.mjs#L21)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates a string as a valid Social Security Number, with our without dashes.
 
@@ -338,7 +338,7 @@ Parses and validates a string as a valid Social Security Number, with our withou
 **Returns**: `string` - A canonically formatted SSN like 'XX-XXX-XXXX'.
 
 <a id="TimeOfDay"></a>
-### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L41)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L40)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates the input as a time-of-day. Because there is no date component and some timezones would be
 ambiguous, this type does not recognize nor accepts timezone specification.
@@ -359,7 +359,7 @@ ambiguous, this type does not recognize nor accepts timezone specification.
 **Returns**: [`TimeData`](#TimeData) - The parsed time data.
 
 <a id="ValidatedString"></a>
-### `ValidatedString(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/validated-string.mjs#L30)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `ValidatedString(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/validated-string.mjs#L29)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Validates a string according to the provided options. This is useful when there's not a pre-built type like `Email`.
 
@@ -407,7 +407,7 @@ Date-time components.
 | `valueOf()` | `function` | The milliseconds since the epoch (UTC) represented by the original   input string (integer). |
 
 <a id="DayData"></a>
-### `DayData` <sup>↱<sup>[source code](./src/day.mjs#L11)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
+### `DayData` <sup>↱<sup>[source code](./src/day.mjs#L10)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
 
 Represents the components of specific day.
 
@@ -423,7 +423,7 @@ Represents the components of specific day.
 | `valueOf()` | `function` | The seconds since the epoch (UTC) represented by the original input   string (at the start of the UTC day). |
 
 <a id="EmailData"></a>
-### `EmailData` <sup>↱<sup>[source code](./src/email.mjs#L7)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
+### `EmailData` <sup>↱<sup>[source code](./src/email.mjs#L6)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
 
 Email address and components.
 
@@ -441,7 +441,7 @@ Email address and components.
 | `commentDomainSuffix` | `string` \| `undefined` | The embedded comment, if any, immediately after the domain or   domain literal. |
 
 <a id="TimeData"></a>
-### `TimeData` <sup>↱<sup>[source code](./src/time-of-day.mjs#L10)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
+### `TimeData` <sup>↱<sup>[source code](./src/time-of-day.mjs#L9)</sup></sup> <sup>⇧<sup>[global typedef index](#global-typedef-index)</sup></sup>
 
 Represents the time components.
 
