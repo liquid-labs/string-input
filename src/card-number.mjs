@@ -6,8 +6,8 @@ import { checkValidateValue } from './lib/check-validate-value'
 import { typeChecks } from './lib/type-checks'
 
 const seps = '[ -]'
-const formattedNumberRE = new RegExp(`^(?:\\d${seps}?)+\\d$`)
-const rawNumberRE = new RegExp(seps, 'g')
+const formattedNumberRe = new RegExp(`^(?:\\d${seps}?)+\\d$`)
+const rawNumberRe = new RegExp(seps, 'g')
 
 /**
  * Validates an input string as a syntactically valid card number.
@@ -37,7 +37,7 @@ const CardNumber = function (input, options = this || {}) {
 
   typeChecks({ input, name, status })
 
-  if (formattedNumberRE.test(input) === false) {
+  if (formattedNumberRe.test(input) === false) {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,
@@ -47,7 +47,7 @@ const CardNumber = function (input, options = this || {}) {
     })
   }
 
-  const numberString = input.replaceAll(rawNumberRE, '')
+  const numberString = input.replaceAll(rawNumberRe, '')
   if (lengths !== undefined && !lengths.includes(numberString.length)) {
     throw new ArgumentInvalidError({
       argumentName  : name,

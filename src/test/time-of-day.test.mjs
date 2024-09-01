@@ -33,7 +33,7 @@ describe('TimeOfDay', () => {
     [null, {}, "is 'null'\\.$"],
     [12, {}, "type 'string' is wrong type. Received type 'number'\\.$"],
     ['foo', {}, 'not recognized'],
-    ['2400', { noEOD : true }, "special 'end-of-day' time disallowed"],
+    ['2400', { noEod : true }, "special 'end-of-day' time disallowed"],
     ['12:00', { max : '11:59' }, "must be less than or equal to '11:59'"],
     ['12:00', { min : '12:01' }, "must be greater than or equal to '12:01"],
     ['12:00:30.5', { max : '12:00:30.499' }, "must be less than or equal to '12:00:30.499'"],
@@ -65,7 +65,7 @@ describe('TimeOfDay', () => {
       expect(time.getMinutes()).toBe(mins)
       expect(time.getSeconds()).toBe(secs)
       expect(time.getFractionalSeconds()).toBe(fracSecs)
-      expect(time.isEOD()).toBe(false)
+      expect(time.isEod()).toBe(false)
     }
   )
 
@@ -77,7 +77,7 @@ describe('TimeOfDay', () => {
 
   test.each(['2400', '24:00', '24:00:00'])(
     'Recognizes %s as special end of day.',
-    (input) => expect(TimeOfDay(input).isEOD()).toBe(true)
+    (input) => expect(TimeOfDay(input).isEod()).toBe(true)
   )
 
   test("Explicit name overrides 'this' context", () => {

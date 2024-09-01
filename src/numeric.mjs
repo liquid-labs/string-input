@@ -5,7 +5,7 @@ import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { typeChecks } from './lib/type-checks'
 
-const leadingZeroRE = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and '0.xx'
+const leadingZeroRe = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and '0.xx'
 
 /**
  * Parses and validates an input string as a valid number (float).
@@ -30,7 +30,7 @@ const Numeric = function (input, options = this || {}) {
 
   typeChecks({ input, name, status })
 
-  if (allowLeadingZeros !== true && leadingZeroRE.test(input) === true) {
+  if (allowLeadingZeros !== true && leadingZeroRe.test(input) === true) {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,

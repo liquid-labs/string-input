@@ -169,7 +169,7 @@ order.
 | `options.localTimezone` | `string` |  | For otherwise valid date time input with no time zone component, then the   `localTimeZone` must be specified as an option. This value is only used if the timezone is not specified in the   input string and any timezone specified in the input string will override this value. |
 | `options.min` | `string` \| `number` \| `Date` |  | The earliest valid time, inclusive. This may be specified as any string   parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
 | `options.max` | `string` \| `number` \| `Date` |  | The latest valid time, inclusive. This may be specified as any string   parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
-| `options.noEOD` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
+| `options.noEod` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 | `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 
@@ -352,7 +352,7 @@ ambiguous, this type does not recognize nor accepts timezone specification.
 | [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.max` | `string` |  | A string, parseable by this function, representing the latest valid time. |
 | `options.min` | `string` |  | A string, parseable by this function, representing the earliest valid time. |
-| `options.noEOD` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
+| `options.noEod` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
 | `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 | `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
 
@@ -396,7 +396,7 @@ Date-time components.
 | `getYear()` | `function` | The year component of the date-time (integer). |
 | `getMonth()` | `function` | The month of the year (1-indexed; integer). |
 | `getDayOfMonth()` | `function` | The numerical day of the month (integer). |
-| `isEOD()` | `function` | Whether or not the time is the special 'end of day' time. |
+| `isEod()` | `function` | Whether or not the time is the special 'end of day' time. |
 | `getHours()` | `function` | The hours component of the date-time (integer). |
 | `getMinutes()` | `function` | The minutes component of the date-time (integer). |
 | `getSeconds()` | `function` | The seconds component of the date-time (integer). |
@@ -449,7 +449,7 @@ Represents the time components.
 
 | Name | Type | Description |
 | --- | --- | --- |
-| `isEOD()` | `function` | Whether or not the time is the special 'end of day' time. |
+| `isEod()` | `function` | Whether or not the time is the special 'end of day' time. |
 | `getHours()` | `function` | The hours component of the date-time (integer). |
 | `getMinutes()` | `function` | The minutes component of the date-time (integer). |
 | `getSeconds()` | `function` | The seconds component of the date-time (integer). |

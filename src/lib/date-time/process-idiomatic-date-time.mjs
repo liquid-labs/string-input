@@ -16,16 +16,16 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
   const { name, status } = options
 
   // mil time can easily be confused for the year, so we have to exclude matches to the year
-  const milTimeRE = new RegExp(
+  const milTimeRe = new RegExp(
     `(?<![a-zA-Z]{3}\\s+|[./+-])${militaryTimeReString}(?![./-])(?:\\s*${timezoneReString}\\b)?`
   )
-  const milTimeMatch = input.match(milTimeRE)
-  const timeRE = new RegExp(`${timeReString}(?:\\s*${timezoneReString}\\b)?`)
-  const timeMatch = input.match(timeRE)
-  const twentyFourHourTimeRE = new RegExp(
+  const milTimeMatch = input.match(milTimeRe)
+  const timeRe = new RegExp(`${timeReString}(?:\\s*${timezoneReString}\\b)?`)
+  const timeMatch = input.match(timeRe)
+  const twentyFourHourTimeRe = new RegExp(
     `${twentyFourHourTimeReString}(?:\\s*${timezoneReString}\\b)?`
   )
-  const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRE)
+  const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRe)
 
   const timeMatches =
     (milTimeMatch !== null ? 1 : 0)
@@ -42,13 +42,13 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
   }
   // I don't believe multiple matches is actually possible.
 
-  const rfc2822DayRE = new RegExp(rfc2822DayReString)
-  const rfc2822DayMatch = input.match(rfc2822DayRE)
-  const usDateRE = new RegExp('\\b' + usDateReString + '\\b')
-  const usDateMatch = input.match(usDateRE)
+  const rfc2822DayRe = new RegExp(rfc2822DayReString)
+  const rfc2822DayMatch = input.match(rfc2822DayRe)
+  const usDateRe = new RegExp('\\b' + usDateReString + '\\b')
+  const usDateMatch = input.match(usDateRe)
   // can't use '\b' at start because it would match '-' in '-2024/01/01'
-  const intlDateRE = new RegExp('(?:^| )' + intlDateReString + '\\b')
-  const intlDateMatch = input.match(intlDateRE)
+  const intlDateRe = new RegExp('(?:^| )' + intlDateReString + '\\b')
+  const intlDateMatch = input.match(intlDateRe)
 
   const dayMatches =
     (rfc2822DayMatch !== null ? 1 : 0)
@@ -90,12 +90,12 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
     rfc2822DayMatch?.[2] || usDateMatch?.[2] || intlDateMatch?.[4]
   )
 
-  const isEOD =
+  const isEod =
     milTimeMatch?.[1] !== undefined
     || twentyFourHourTimeMatch?.[1] !== undefined
     || false
   let hours, minutes, seconds, fractionalSeconds
-  if (isEOD === true) {
+  if (isEod === true) {
     hours = 24
     minutes = 0
     seconds = 0
@@ -140,7 +140,7 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
     year,
     month,
     day,
-    isEOD,
+    isEod,
     hours,
     minutes,
     seconds,
