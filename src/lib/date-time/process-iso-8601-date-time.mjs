@@ -25,8 +25,8 @@ const processISO8601DateTime = (options, iso8601Match, localTimezone) => {
   const year = parseInt(iso8601Match[1])
   const month = parseInt(iso8601Match[3]) || 1
   const day = parseInt(iso8601Match[4]) || 1
-  const isEOD = iso8601Match[8] !== undefined
-  const hours = isEOD === true ? 24 : parseInt(iso8601Match[10])
+  const isEod = iso8601Match[8] !== undefined
+  const hours = isEod === true ? 24 : parseInt(iso8601Match[10])
   let minutes, seconds, fracSeconds
 
   if (
@@ -85,7 +85,7 @@ const processISO8601DateTime = (options, iso8601Match, localTimezone) => {
     year,
     month,
     day,
-    isEOD,
+    isEod,
     hours,
     minutes,
     seconds,

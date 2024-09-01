@@ -18,7 +18,7 @@ import { typeChecks } from './lib/type-checks'
  * @property {function(): number} getYear() - The year component of the date-time (integer).
  * @property {function(): number} getMonth() - The month of the year (1-indexed; integer).
  * @property {function(): number} getDayOfMonth() - The numerical day of the month (integer).
- * @property {function(): boolean} isEOD() - Whether or not the time is the special 'end of day' time.
+ * @property {function(): boolean} isEod() - Whether or not the time is the special 'end of day' time.
  * @property {function(): number} getHours() - The hours component of the date-time (integer).
  * @property {function(): number} getMinutes() - The minutes component of the date-time (integer).
  * @property {function(): number} getSeconds() - The seconds component of the date-time (integer).
@@ -49,7 +49,7 @@ import { typeChecks } from './lib/type-checks'
  *   parseable by this function, milliseconds since the epoch (UTC), or a Date object.
  * @param {string|number|Date} options.max - The latest valid time, inclusive. This may be specified as any string
  *   parseable by this function, milliseconds since the epoch (UTC), or a Date object.
- * @param {boolean} options.noEOD - Disallows the special times '24:00:00', which represents the last moment of the day.
+ * @param {boolean} options.noEod - Disallows the special times '24:00:00', which represents the last moment of the day.
  * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
  *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
  * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
@@ -59,7 +59,7 @@ import { typeChecks } from './lib/type-checks'
 const DateTime = function (input, options = this || {}) {
   // we deconstruct options here instead of in the function call because we use the options later to create the
   // 'validationOptions'
-  const { name, localTimezone, noEOD, status = 400 } = options
+  const { name, localTimezone, noEod, status = 400 } = options
   let { min, max } = options
 
   typeChecks({ input, name, status })
@@ -84,7 +84,7 @@ const DateTime = function (input, options = this || {}) {
     value = createValue(processIdiomaticDateTime(options, input, localTimezone))
   }
 
-  if (noEOD === true && value.isEOD() === true) {
+  if (noEod === true && value.isEod() === true) {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,
@@ -206,7 +206,7 @@ const createValue = ([
   year,
   month,
   day,
-  isEOD,
+  isEod,
   hours,
   minutes,
   seconds,
@@ -231,7 +231,7 @@ const createValue = ([
     getYear              : () => year,
     getMonth             : () => month,
     getDayOfMonth        : () => day,
-    isEOD                : () => isEOD,
+    isEod                : () => isEod,
     getHours             : () => hours,
     getMinutes           : () => minutes,
     getSeconds           : () => seconds,

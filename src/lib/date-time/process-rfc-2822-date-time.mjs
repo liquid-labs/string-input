@@ -26,7 +26,7 @@ const processRFC2822DateTime = (options, rfc2822Match, localTimezone) => {
     year,
     month,
     day,
-    /* isEOD */ false,
+    /* isEod */ false,
     hours,
     minutes,
     seconds,

@@ -96,7 +96,7 @@ describe('DateTime', () => {
     [12, {}, "type 'string' is wrong type."],
     [
       '1/2/2024 24:00',
-      { noEOD : true },
+      { noEod : true },
       "uses disallowed special EOD time '24:00'\\.$",
     ],
     // test both input and max use local time zone if net specified
@@ -199,7 +199,7 @@ describe('DateTime', () => {
       expect(result.getYear()).toBe(expected[0])
       expect(result.getMonth()).toBe(expected[1])
       expect(result.getDayOfMonth()).toBe(expected[2])
-      expect(result.isEOD()).toBe(expected[3])
+      expect(result.isEod()).toBe(expected[3])
       expect(result.getHours()).toBe(expected[4])
       expect(result.getMinutes()).toBe(expected[5])
       expect(result.getSeconds()).toBe(expected[6])

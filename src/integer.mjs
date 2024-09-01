@@ -6,7 +6,7 @@ import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { typeChecks } from './lib/type-checks'
 
-const anyDigitsRE = /^-?\d+$/
+const anyDigitsRe = /^-?\d+$/
 
 /**
  * Parses and validates an input string as an integer.
@@ -33,7 +33,7 @@ const Integer = function (input, options = this || {}) {
 
   if (allowLeadingZeros !== true && input.match(integerRe) === null) {
     let issue = 'does not appear to be an integer'
-    if (input.match(anyDigitsRE)) {
+    if (input.match(anyDigitsRe)) {
       issue += '; leading zeroes are not allowed.'
     }
     throw new ArgumentInvalidError({
@@ -43,7 +43,7 @@ const Integer = function (input, options = this || {}) {
       status,
     })
   }
-  else if (allowLeadingZeros === true && input.match(anyDigitsRE) === null) {
+  else if (allowLeadingZeros === true && input.match(anyDigitsRe) === null) {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,
