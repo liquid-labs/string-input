@@ -25,7 +25,7 @@ const failureInput = [
       validationProperty : 'abc'
     },
     'secret is abc']
-].map((params) => { params[1].name = 'foo'; params[2] = "EIN 'foo'.*?" + params[2]; return params })
+].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
 
 describe('EIN', () => {
   test.each(validInput)('%s with options %p => %s',

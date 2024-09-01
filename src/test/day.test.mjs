@@ -24,8 +24,8 @@ describe('Day', () => {
   ]
 
   const failureInput = [
-    [undefined, {}, 'is missing or empty'],
-    [null, {}, 'is missing or empty'],
+    [undefined, {}, "is 'undefined'\\.$"],
+    [null, {}, "is 'null'\\.$"],
     [12, {}, "type 'string' is wrong type. Received type 'number'.$"],
     ['01.01.01', {}, 'is ambiguous. Try specifying four digit year'],
     ['foo', {}, 'not recognized'],

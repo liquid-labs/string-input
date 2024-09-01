@@ -29,6 +29,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
  * @param {string|number|Date} options.max - The latest day to be considered valid.
  * @param {string|number|Date} options.min - The earliest day to be considered valid.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
  *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
  * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
@@ -36,11 +38,11 @@ import { typeChecks } from './lib/type-checks'
  * @returns {DayData} The day/date data.
  */
 const Day = function (input, options = this || {}) {
-  const { name } = options
+  const { name, status } = options
   let { max, min } = options
 
   const selfDescription = describeInput('Day', name)
-  typeChecks({ input, name })
+  typeChecks({ input, name, status })
 
   const intlMatch = input.match(intlDateRe)
   const usMatch = input.match(usDateRe)
@@ -84,10 +86,10 @@ const Day = function (input, options = this || {}) {
   const date = new Date(year, month - 1, day)
 
   if (max !== undefined) {
-    max = convertToDay(max, name, 'max')
+    max = convertToDay(max, name, 'max', status)
   }
   if (min !== undefined) {
-    min = convertToDay(min, name, 'min')
+    min = convertToDay(min, name, 'min', status)
   }
 
   checkMaxMin({
@@ -96,6 +98,7 @@ const Day = function (input, options = this || {}) {
     max,
     min,
     name,
+    status,
     value         : date
   })
 
@@ -105,6 +108,7 @@ const Day = function (input, options = this || {}) {
       argumentName: name,
       argumentValue: input,
       issue: 'looks syntactically valid, but specifies an invalid day for the given month/year.',
+      status,
     })
   }
 
@@ -118,7 +122,7 @@ const Day = function (input, options = this || {}) {
 Day.description = 'Day'
 Day.toString = () => Day.description
 
-const convertToDay = (value, name, constraint) => {
+const convertToDay = (value, name, constraint, status) => {
   if (typeof value === 'string') {
     return Day(value, { name : `${name}' constraint '${constraint}` })
   } else if (typeof value === 'number') {
@@ -133,6 +137,7 @@ const convertToDay = (value, name, constraint) => {
       argumentName: `${name}' constraint '${constraint}`,
       arguemntType: `string'/'number'/'Date`,
       issue : 'has nonconvertible type',
+      status,
     })
   } // else
   return value

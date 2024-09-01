@@ -15,7 +15,7 @@ const failureInput = [
   ['900-45-6789', {}, 'not a valid SSN'],
   ['123456789', { validateInput : (input) => input.startsWith('2') }, 'failed custom input validation'],
   ['123456789', { validateValue : (value) => value.startsWith('2') }, 'failed custom value validation']
-].map((params) => { params[1].name = 'foo'; params[2] = "SSN 'foo'.*?" + params[2]; return params })
+].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
 
 describe('SSN', () => {
   test.each(validInput)('%s with options %p => %s',

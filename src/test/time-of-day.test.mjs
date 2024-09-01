@@ -21,9 +21,9 @@ describe('TimeOfDay', () => {
   ]
 
   const invalidInput = [
-    [undefined, {}, 'is missing or empty'],
-    [null, {}, 'is missing or empty'],
-    [12, {}, "type 'string' is wrong type. Received type 'number'.$"],
+    [undefined, {}, "is 'undefined'\\.$"],
+    [null, {}, "is 'null'\\.$"],
+    [12, {}, "type 'string' is wrong type. Received type 'number'\\.$"],
     ['foo', {}, 'not recognized'],
     ['2400', { noEOD : true }, "special 'end-of-day' time disallowed"],
     ['12:00', { max : '11:59' }, "must be less than or equal to '11:59'"],

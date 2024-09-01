@@ -30,14 +30,14 @@
     "@liquid-labs/dmd": "^6.3.1",
     "@liquid-labs/jsdoc-to-markdown": "^8.1.1",
     "@liquid-labs/sdlc-resource-babel-and-rollup": "^1.0.0-alpha.9",
-    "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.18",
+    "@liquid-labs/sdlc-resource-eslint": "^1.0.0-alpha.20",
     "@liquid-labs/sdlc-resource-jest": "^1.0.0-alpha.7",
-    "dmd-readme-api": "^1.0.0-beta.7"
+    "dmd-readme-api": "^1.0.0-beta.8"
   },
   "dependencies": {
     "luhn": "^2.4.1",
     "regex-repo": "^5.0.0",
-    "standard-error-set": "^1.0.0-alpha.8",
+    "standard-error-set": "^1.0.0-alpha.9",
     "true-email-validator": "^1.0.0-alpha.5"
   },
   "_sdlc": {

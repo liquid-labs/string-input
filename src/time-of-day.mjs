@@ -27,6 +27,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string} options.max - A string, parseable by this function, representing the latest valid time.
  * @param {string} options.min - A string, parseable by this function, representing the earliest valid time.
  * @param {boolean} options.noEOD - Disallows the special times '24:00:00', which represents the last moment of the day.
@@ -37,11 +39,11 @@ import { typeChecks } from './lib/type-checks'
  * @returns {TimeData} The parsed time data.
  */
 const TimeOfDay = function (input, options = this || {}) {
-  const { name, noEOD } = options
+  const { name, noEOD, status } = options
   let { min, max } = options
 
   const selfDescription = describeInput('Time of day', name)
-  typeChecks({ input, name })
+  typeChecks({ input, name, status })
 
   const militaryTimeMatch = input.match(militaryTimeRe)
   const timeMatch = input.match(timeRe)
@@ -72,7 +74,7 @@ const TimeOfDay = function (input, options = this || {}) {
   if (min !== undefined) {
     min = TimeOfDay(min, { name : `${name}' constraint 'min` })
   }
-  checkMaxMin({ input, limitToString : limitDescriptor, max, min, name, value })
+  checkMaxMin({ input, limitToString : limitDescriptor, max, min, name, status, value })
 
   checkValidateValue(value, validationOptions)
 

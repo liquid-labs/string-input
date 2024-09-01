@@ -1,12 +1,24 @@
+import { ArgumentInvalidError } from 'standard-error-set'
+
 import { getTimezoneOffset } from './get-timezone-offset'
 
 const fracSecondsPrecision = 100000
 
-const processISO8601DateTime = (selfDescription, iso8601Match, localTimezone) => {
+const processISO8601DateTime = (options, iso8601Match, localTimezone) => {
+  const { name, status } = options
+
   if (iso8601Match[5] !== undefined) {
-    throw new Error(`${selfDescription} does not support week of year style dates.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      issue: 'does not support week of year style dates',
+      status,
+    })
   } else if (iso8601Match[7] !== undefined) {
-    throw new Error(`${selfDescription} does not support day of year/ordinal/Julian style dates.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      issue: 'does not support day of year/ordinal/Julian style dates',
+      status,
+    })
   }
 
   const year = parseInt(iso8601Match[1])
@@ -48,7 +60,7 @@ const processISO8601DateTime = (selfDescription, iso8601Match, localTimezone) =>
 
   const timezone = iso8601Match[17] || localTimezone
   const timezoneOffset =
-    getTimezoneOffset(selfDescription, [year, month, day, hours, minutes, seconds, fracSeconds, timezone])
+    getTimezoneOffset(options, [year, month, day, hours, minutes, seconds, fracSeconds, timezone])
 
   return [year, month, day, isEOD, hours, minutes, seconds, fracSeconds, timezoneOffset]
 }

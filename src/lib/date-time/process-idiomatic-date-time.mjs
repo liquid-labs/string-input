@@ -1,23 +1,26 @@
 import {
-  intlDateREString,
-  militaryTimeREString,
-  rfc2822DayREString,
-  timeREString,
-  timezoneREString,
-  twentyFourHourTimeREString,
-  usDateREString
+  intlDateReString,
+  militaryTimeReString,
+  rfc2822DayReString,
+  timeReString,
+  timezoneReString,
+  twentyFourHourTimeReString,
+  usDateReString
 } from 'regex-repo'
+import { ArgumentInvalidError } from 'standard-error-set'
 
 import { convertMonthName } from './convert-month-name'
 import { getTimezoneOffset } from './get-timezone-offset'
 
-const processIdiomaticDateTime = (selfDescription, input, localTimezone) => {
+const processIdiomaticDateTime = (options, input, localTimezone) => {
+  const { name, status } = options
+
   // mil time can easily be confused for the year, so we have to exclude matches to the year
-  const milTimeRE = new RegExp(`(?<![a-zA-Z]{3}\\s+|[./+-])${militaryTimeREString}(?![./-])(?:\\s*${timezoneREString}\\b)?`)
+  const milTimeRE = new RegExp(`(?<![a-zA-Z]{3}\\s+|[./+-])${militaryTimeReString}(?![./-])(?:\\s*${timezoneReString}\\b)?`)
   const milTimeMatch = input.match(milTimeRE)
-  const timeRE = new RegExp(`${timeREString}(?:\\s*${timezoneREString}\\b)?`)
+  const timeRE = new RegExp(`${timeReString}(?:\\s*${timezoneReString}\\b)?`)
   const timeMatch = input.match(timeRE)
-  const twentyFourHourTimeRE = new RegExp(`${twentyFourHourTimeREString}(?:\\s*${timezoneREString}\\b)?`)
+  const twentyFourHourTimeRE = new RegExp(`${twentyFourHourTimeReString}(?:\\s*${timezoneReString}\\b)?`)
   const twentyFourHourTimeMatch = input.match(twentyFourHourTimeRE)
 
   const timeMatches = (milTimeMatch !== null ? 1 : 0) +
@@ -25,16 +28,21 @@ const processIdiomaticDateTime = (selfDescription, input, localTimezone) => {
     (twentyFourHourTimeMatch !== null ? 1 : 0)
 
   if (timeMatches === 0) {
-    throw new Error(`Could not find time component in ${selfDescription.toLowerCase()} input '${input}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: 'does not contain a recognizable time component',
+      status
+    })
   }
   // I don't believe multiple matches is actually possible.
 
-  const rfc2822DayRE = new RegExp(rfc2822DayREString)
+  const rfc2822DayRE = new RegExp(rfc2822DayReString)
   const rfc2822DayMatch = input.match(rfc2822DayRE)
-  const usDateRE = new RegExp('\\b' + usDateREString + '\\b')
+  const usDateRE = new RegExp('\\b' + usDateReString + '\\b')
   const usDateMatch = input.match(usDateRE)
   // can't use '\b' at start because it would match '-' in '-2024/01/01'
-  const intlDateRE = new RegExp('(?:^| )' + intlDateREString + '\\b')
+  const intlDateRE = new RegExp('(?:^| )' + intlDateReString + '\\b')
   const intlDateMatch = input.match(intlDateRE)
 
   const dayMatches = (rfc2822DayMatch !== null ? 1 : 0) +
@@ -42,9 +50,20 @@ const processIdiomaticDateTime = (selfDescription, input, localTimezone) => {
     (intlDateMatch !== null ? 1 : 0)
 
   if (dayMatches === 0) {
-    throw new Error(`Could not find date component in ${selfDescription.toLowerCase()} input '${input}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: 'does not contain a recognizable date component',
+      status
+    })
   } else if (dayMatches > 1) {
-    throw new Error(`Ambiguous date component in ${selfDescription.toLowerCase()} input '${input}'; try specifying a 4+ digit year (pad with '0' where necessary).`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: 'date component is ambiguous',
+      hint: "Try specifying a 4+ digit year (pad with '0' where necessary).",
+      status
+    })
   }
 
   const ceIndicator = usDateMatch?.[3] || intlDateMatch?.[1] || ''
@@ -80,7 +99,7 @@ const processIdiomaticDateTime = (selfDescription, input, localTimezone) => {
 
   const timezone = milTimeMatch?.[4] || timeMatch?.[6] || twentyFourHourTimeMatch?.[6] || localTimezone
   const timezoneOffset =
-    getTimezoneOffset(selfDescription, [year, month, day, hours, minutes, seconds, fractionalSeconds, timezone])
+    getTimezoneOffset(options, [year, month, day, hours, minutes, seconds, fractionalSeconds, timezone])
 
   return [year, month, day, isEOD, hours, minutes, seconds, fractionalSeconds, timezoneOffset]
 }

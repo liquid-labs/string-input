@@ -12,7 +12,7 @@ describe('getTimezoneOffset', () => {
   test('Default to local timezone', () => {
     const [dateComponents, now] = getDateComponents()
     const localTimezoneOffset = now.getTimezoneOffset()
-    expect(getTimezoneOffset('Test input', [...dateComponents, undefined])).toBe(localTimezoneOffset)
+    expect(getTimezoneOffset({ name: 'foo' }, [...dateComponents, undefined])).toBe(localTimezoneOffset)
   })
 
   test.each([
@@ -27,12 +27,12 @@ describe('getTimezoneOffset', () => {
     ['ART', 120] */
   ])('TZ %s => %s', (tz, offset) => {
     const [dateComponents] = getDateComponents()
-    expect(getTimezoneOffset('Test input', [...dateComponents, tz])).toBe(offset)
+    expect(getTimezoneOffset({ name: 'foo' }, [...dateComponents, tz])).toBe(offset)
   })
 
   test('Raises exception if TZ is not recognized', () => {
     const [dateComponents] = getDateComponents()
-    expect(() => getTimezoneOffset('Test input', [...dateComponents, 'FOO']))
+    expect(() => getTimezoneOffset({ name: 'foo' }, [...dateComponents, 'FOO']))
       .toThrow(/not recognized as valid timezone/)
   })
 })

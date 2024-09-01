@@ -13,6 +13,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.noAbbreviations = Disallow t/f/y/n responses.
  * @param {boolean} options.noNumeric - Disallow numeric answers.
  * @param {boolean} options.noYesNo - Disallow yes/no/y/n responses.
@@ -30,11 +32,12 @@ const BooleanString = function (input, options = this || {}) {
     noAbbreviations = false,
     noNumeric = false,
     noYesNo = false,
+    status,
     treatNegativeValuesAsFalse = false
   } = options
 
   const selfDescription = describeInput('Boolean', name)
-  typeChecks({ input, name })
+  typeChecks({ input, name, status })
 
   input = input.toLowerCase()
 
@@ -43,7 +46,8 @@ const BooleanString = function (input, options = this || {}) {
       argumentName: name, 
       argumentValue: input, 
       issue: 'is disallowed abbreviated value', 
-      hint: `Use ${possibleBooleanValues(options)}.`
+      hint: `Use ${possibleBooleanValues(options)}.`,
+      status
     })
   }
 
@@ -52,7 +56,8 @@ const BooleanString = function (input, options = this || {}) {
       argumentName: name, 
       argumentValue: input, 
       issue: 'is disallowed yes/no value', 
-      hint: `Use ${possibleBooleanValues(options)}.`
+      hint: `Use ${possibleBooleanValues(options)}.`,
+      status
     })
   }
 
@@ -68,7 +73,8 @@ const BooleanString = function (input, options = this || {}) {
         argumentName: name, 
         argumentValue: input, 
         issue: 'is disallowed numeric value', 
-        hint: `Use ${possibleBooleanValues(options)}.`
+        hint: `Use ${possibleBooleanValues(options)}.`,
+        status
       })
     }
     else if (Number.isNaN(numericValue) === true ||
@@ -77,7 +83,8 @@ const BooleanString = function (input, options = this || {}) {
         argumentName: name, 
         argumentValue: input, 
         issue: 'could not be parsed as a boolean value', 
-        hint: `Use ${possibleBooleanValues(options)}.`
+        hint: `Use ${possibleBooleanValues(options)}.`,
+        status
       })
     }
     if (numericValue === 0 || (treatNegativeValuesAsFalse === true && numericValue < 0)) {
@@ -89,7 +96,8 @@ const BooleanString = function (input, options = this || {}) {
         argumentName: name, 
         argumentValue: input, 
         issue: 'is ambiguous negative numeric value', 
-        hint: `Use ${possibleBooleanValues(options)}.`
+        hint: `Use ${possibleBooleanValues(options)}.`,
+        status
       })
     }
   }

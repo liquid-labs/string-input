@@ -42,7 +42,7 @@ const failureInput = [
     },
     'secret is abc'],
   ['foo@baz.com', { validateValue : () => undefined }, 'failed custom result validation']
-].map((params) => { params[1].name = 'foo'; params[2] = "Email 'foo'.*?" + params[2]; return params })
+].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
 
 describe('Email', () => {
   test.each(validInput)('%s with options %p => %s',

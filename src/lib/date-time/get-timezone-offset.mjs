@@ -1,6 +1,8 @@
+import { ArgumentInvalidError } from 'standard-error-set'
+
 import { makeDateTimeString } from './make-date-time-string'
 
-const getTimezoneOffset = (selfDescription, [year, month, day, hours, minutes, seconds, fracSeconds, timezone]) => {
+const getTimezoneOffset = ({ name, status }, [year, month, day, hours, minutes, seconds, fracSeconds, timezone]) => {
   if (timezone === undefined) {
     // it's important to test against the date/time itself in case it's in a different daylight savings period than the
     // current
@@ -18,7 +20,12 @@ const getTimezoneOffset = (selfDescription, [year, month, day, hours, minutes, s
       const partialSpec = makeDateTimeString([year, month, day, hours, minutes, seconds, fracSeconds])
       const tzDate = new Date(`${partialSpec} ${timezone}`)
       if (isNaN(tzDate.getDate())) { // we assume everything but the TZ is good
-        throw new Error(`${selfDescription} timezone designation '${timezone}' not recognized as valid timezone. (The recognized timezones are limited to basic US timezone like CST and PDT; otherwise it's best to designate the offset like '+1030' or '-0100'.)`)
+        throw new ArgumentInvalidError({
+          argumentName: name,
+          issue: 'timezone designation not recognized as valid timezone',
+          hint: "The recognized timezones are limited to basic US timezone like CST and PDT; otherwise it's best to designate the offset like '+1030' or '-0100'.",
+          status,
+        })
       }
       const utcDate = new Date(`${partialSpec} Z`)
       return Math.trunc((utcDate - tzDate) / (1000 * 60))

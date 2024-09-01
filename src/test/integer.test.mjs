@@ -20,9 +20,9 @@ describe('Integer', () => {
   ]
 
   const failureInput = [
-    [undefined, {}, 'is null or undefined'],
-    [null, {}, 'is null or undefined'],
-    [12, {}, 'must be a string'],
+    [undefined, {}, "is 'undefined'\\.$"],
+    [null, {}, "is 'null'\\.$"],
+    [12, {}, "type 'string' is wrong type."],
     ['1.2', {}, 'does not appear to be an integer'],
     ['01', {}, 'does not appear to be an integer'],
     ['foo', {}, 'does not appear to be an integer'],
@@ -32,7 +32,7 @@ describe('Integer', () => {
     ['12', { divisibleBy : 5 }, 'must be divisible by'],
     ['12', { validateInput : (input) => input === '13' }, 'failed custom input validation'],
     ['12', { validateValue : (value) => value === 13 }, 'failed custom value validation']
-  ].map((params) => { params[1].name = 'foo'; params[2] = "Integer 'foo'.*?" + params[2]; return params })
+  ].map((params) => { params[1].name = 'foo'; params[2] = "argument 'foo'.*?" + params[2]; return params })
   // ^^ In order to keep the `failureInput` compact, we append the `name` and add the name check to the regex here
 
   test.each(validInput)('With input %s and options %p yields %s', (input, options, expected) =>

@@ -1,3 +1,5 @@
+import { ArgumentInvalidError } from 'standard-error-set'
+
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { describeInput } from './lib/describe-input'
@@ -8,11 +10,13 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string} options.after - The input must be or lexicographically sort after this string.
  * @param {string} options.before - The input must be or lexicographically sort before this string.
  * @param {string} options.endsWith - The input string must end with the indicated string.
  * @param {number} options.maxLength - The longest valid input string in terms of characters.
- * @param {string|RegExp} options.matchRE - The input string must match the provided regular expression. Specifying a
+ * @param {string|RegExp} options.matchRe - The input string must match the provided regular expression. Specifying a
  *   string which is an invalid regular expression will cause an exception to be thrown.
  * @param {number} options.minLength - The shortest valid input string in terms of characters.
  * @param {Array.<string>} options.oneOf - The input string must be exactly one of the members of this array.
@@ -32,45 +36,86 @@ const ValidatedString = function (input, options = this || {}) {
     minLength,
     name,
     oneOf,
-    startsWith
+    startsWith,
+    status,
   } = options
-  let { matchRE } = options
+  let { matchRe } = options
 
   const selfDescription = describeInput('String', name)
-  typeChecks({ input, name })
+  typeChecks({ input, name, status })
 
   if (after !== undefined && [after, input].sort()[0] !== after) {
-    throw new Error(`${selfDescription} input '${input}' must be lexicographically after '${after}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must be lexicographically after '${after}'`,
+      status,
+    })
   }
   if (before !== undefined && [input, before].sort()[1] !== before) {
-    throw new Error(`${selfDescription} input '${input}' must be lexicographically before '${before}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must be lexicographically before '${before}'`,
+      status,
+    })
   }
 
   if (endsWith !== undefined && !input.endsWith(endsWith)) {
-    throw new Error(`${selfDescription} input '${input}' must end with '${endsWith}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must end with '${endsWith}'`,
+      status,
+    })
   }
   if (startsWith !== undefined && !input.startsWith(startsWith)) {
-    throw new Error(`${selfDescription} input '${input}' must start with '${startsWith}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must start with '${startsWith}'`,
+      status,
+    })
   }
 
-  if (matchRE !== undefined) {
-    if (typeof matchRE === 'string') {
-      matchRE = new RegExp(matchRE)
+  if (matchRe !== undefined) {
+    if (typeof matchRe === 'string') {
+      matchRe = new RegExp(matchRe)
     }
-    if (matchRE.test(input) !== true) {
-      throw new Error(`${selfDescription} input '${input}' must match ${matchRE.toString()}.`)
+    if (matchRe.test(input) !== true) {
+      throw new ArgumentInvalidError({
+        argumentName: name,
+        argumentValue: input,
+        issue: `must match ${matchRe.toString()}`,
+        status,
+      })
     }
   }
 
   if (maxLength !== undefined && input.length > maxLength) {
-    throw new Error(`${selfDescription} input '${input}' must have length ${maxLength} or less.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `may be no more than ${maxLength} characters long`,
+      status,
+    })
   }
   if (minLength !== undefined && input.length < minLength) {
-    throw new Error(`${selfDescription} input '${input}' must have length ${minLength} or greater.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must be at least ${minLength} characters long`,
+      status,
+    })
   }
 
   if (oneOf !== undefined && !oneOf.includes(input)) {
-    throw new Error(`${selfDescription} input '${input}' must be one of '${oneOf.join("', '")}'.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: `must be one of '${oneOf.join("', '")}'`,
+      status,
+    })
   }
 
   const validationOptions = Object.assign({ input, name, type: 'string' }, options)

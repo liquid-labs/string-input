@@ -1,4 +1,5 @@
-import { einRE } from 'regex-repo'
+import { einRe } from 'regex-repo'
+import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
@@ -10,6 +11,8 @@ import { typeChecks } from './lib/type-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
+ * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. 
+ *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
  *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
  * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
@@ -17,14 +20,19 @@ import { typeChecks } from './lib/type-checks'
  * @returns {string} A canonically formatted EIN 'XX-XXXXXXX'.
  */
 const EIN = function (input, options = this || {}) {
-  const { name } = options
+  const { name, status } = options
 
   const selfDescription = describeInput('EIN', name)
-  typeChecks({ input, name })
+  typeChecks({ input, name, status })
 
-  const einMatch = input.match(einRE)
+  const einMatch = input.match(einRe)
   if (einMatch === null) {
-    throw new Error(`${selfDescription} input '${input}' is not a valid EIN. Ensure there are nine digits and a valid area code.`)
+    throw new ArgumentInvalidError({
+      argumentName: name,
+      argumentValue: input,
+      issue: 'is not a valid EIN',
+      status
+    })
   }
   const validationOptions = Object.assign({ input, name, type: 'string<EIN>' }, options)
   checkValidateInput(input, validationOptions)
