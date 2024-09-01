@@ -36,6 +36,8 @@ describe('TimeOfDay', () => {
     ['2400', { noEOD : true }, "special 'end-of-day' time disallowed"],
     ['12:00', { max : '11:59' }, "must be less than or equal to '11:59'"],
     ['12:00', { min : '12:01' }, "must be greater than or equal to '12:01"],
+    ['12:00:30.5', { max : '12:00:30.499' }, "must be less than or equal to '12:00:30.499'"],
+    ['12:00:30.5', { min : '12:00:30.501' }, "must be greater than or equal to '12:00:30.501"],
     ['12:00', { max : 'foo' }, "constraint 'max'.*?not recognized"],
     ['12:00', { min : 'foo' }, "constraint 'min'.*?not recognized"],
     [

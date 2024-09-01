@@ -139,9 +139,9 @@ const getValue = ({
     toString             : () => {
       let time = `${('' + hours).padStart(2, '0')}:${('' + (minutes || '00')).padStart(2, '0')}`
       if (seconds > 0 || fracSeconds > 0) {
-        time += ('' + (seconds || '00')).padStart(2, '0')
+        time += (':' + (seconds || '00')).padStart(2, '0')
         if (fracSeconds !== undefined) {
-          time += fracSeconds
+          time += ('' + fracSeconds).slice(1) // cut off leading zero
         }
       }
 

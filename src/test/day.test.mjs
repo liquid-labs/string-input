@@ -140,6 +140,11 @@ describe('Day', () => {
     expect(() => obj.type(undefined, { name : 'bar' })).toThrow(/argument 'bar'/)
   })
 
-  test('Result valueOf() return epoch seconds', () =>
+  test('Result valueOf() returns epoch seconds', () =>
     expect(Day('1 Jan 2024').valueOf()).toBe(new Date('1 Jan 2024').getTime()))
+
+  test('Result getDate() returns correct date', () => {
+    const expectedDate = new Date('1 Jan 2024')
+    expect(Day('1 Jan 2024').getDate()).toEqual(expectedDate)
+  })
 })
