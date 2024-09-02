@@ -107,14 +107,22 @@ const ValidatedString = function (input, options = this || {}) {
     })
   }
 
-  if (oneOf !== undefined && !oneOf.includes(input)) {
-    const issue = 'must be ' + (oneOf.length === 1 ? `'${oneOf[0]}'` : `one of '${oneOf.join("', '")}'`)
-    throw new ArgumentInvalidError({
-      argumentName  : name,
-      argumentValue : input,
-      issue,
-      status,
-    })
+  if (oneOf !== undefined) {
+    const testGroup = typeof oneOf === 'string' ? oneOf.split(/\s*,\s*/) : oneOf
+
+    if (!testGroup.includes(input)) {
+      const issue =
+        'must be '
+        + (testGroup.length === 1
+          ? `'${testGroup[0]}'`
+          : `one of '${testGroup.join("', '")}'`)
+      throw new ArgumentInvalidError({
+        argumentName  : name,
+        argumentValue : input,
+        issue,
+        status,
+      })
+    }
   }
 
   const validationOptions = Object.assign(
