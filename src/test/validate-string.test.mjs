@@ -27,6 +27,7 @@ const failureInput = [
   ['foo', { minLength : 4 }, 'must be at least 4 characters long'],
   ['foo', { oneOf : ['a'] }, "must be 'a'"],
   ['foo', { oneOf : ['a', 'b'] }, "must be one of 'a', 'b'"],
+  ['foo', { oneOf : 'a, b' }, "must be one of 'a', 'b'"],
   [
     'foo',
     { validateInput : (input) => input.startsWith('a') },
