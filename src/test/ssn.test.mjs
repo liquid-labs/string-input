@@ -9,6 +9,7 @@ const validInput = [
     '123-45-6789',
   ],
   ['123456789', { validateValue : (value) => /-/.test(value) }, '123-45-6789'],
+  ['', {}, undefined],
 ]
 
 const failureInput = [

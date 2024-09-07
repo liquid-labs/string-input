@@ -16,12 +16,14 @@ const validInputs = [
   ['1.5', { divisibleBy : 0.5 }, 1.5],
   ['1.5', { validateInput : (input) => input.endsWith('5') }, 1.5],
   ['1.5', { validateValue : (value) => value === 1.5 }, 1.5],
+  // trimmed values
+  [' 1', {}, 1],
+  ['1 ', {}, 1],
+  ['', {}, undefined],
 ]
 
 const failureInput = [
   ['01', {}, 'leading zeros'],
-  [' 1', {}, 'space'],
-  ['1 ', {}, 'space'],
   ['1.6', { max : 1.5 }, "less than or equal to '1.5'"],
   ['1.4', { min : 1.5 }, "greater than or equal to '1.5'"],
   ['1.6', { divisibleBy : 1.5 }, "divisible by '1.5'"],
@@ -34,7 +36,7 @@ const failureInput = [
 
 describe('Numeric', () => {
   test.each(validInputs)(
-    '%s with options %p => %s',
+    "'%s' with options %p => %s",
     (input, options, expected) => expect(Numeric(input, options)).toBe(expected)
   )
 

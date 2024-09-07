@@ -4,7 +4,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Represents the time components.
@@ -41,7 +41,8 @@ const TimeOfDay = function (input, options = this || {}) {
   const { name, noEod, status } = options
   let { min, max } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   const militaryTimeMatch = input.match(militaryTimeRe)
   const timeMatch = input.match(timeRe)

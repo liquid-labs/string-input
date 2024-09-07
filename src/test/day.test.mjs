@@ -33,6 +33,7 @@ describe('Day', () => {
       1,
       2,
     ],
+    ['', {}, undefined, undefined, undefined],
   ]
 
   const failureInput = [
@@ -115,6 +116,10 @@ describe('Day', () => {
     '%s and options %p => year: %p, month: %p, day of month: %p',
     (input, options, year, month, dayOfMonth) => {
       const day = Day(input, options)
+      if (year === undefined) {
+        expect(day).toBe(undefined)
+        return
+      }
       expect(day.getYear()).toBe(year)
       expect(day.getMonth()).toBe(month)
       expect(day.getDayOfMonth()).toBe(dayOfMonth)

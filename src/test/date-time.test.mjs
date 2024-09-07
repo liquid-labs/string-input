@@ -88,6 +88,7 @@ describe('DateTime', () => {
       { validateValue : (value) => value.getYear() === 2024 },
       [2024, 1, 2, false, 12, 30, 0, 0, undefined],
     ],
+    ['', {}, undefined],
   ]
 
   const failureInput = [
@@ -196,6 +197,10 @@ describe('DateTime', () => {
     '%s (options: %p) => %p',
     (input, options, expected) => {
       const result = DateTime(input, options)
+      if (expected === undefined) {
+        expect(result).toBe(expected)
+        return
+      }
       expect(result.getYear()).toBe(expected[0])
       expect(result.getMonth()).toBe(expected[1])
       expect(result.getDayOfMonth()).toBe(expected[2])

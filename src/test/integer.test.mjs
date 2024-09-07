@@ -17,6 +17,7 @@ describe('Integer', () => {
     ['12', { divisibleBy : 3 }, 12],
     ['12', { validateInput : (input) => input === '12' }, 12],
     ['12', { validateValue : (value) => value === 12 }, 12],
+    ['', {}, undefined],
   ]
 
   const failureInput = [

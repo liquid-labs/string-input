@@ -3,7 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Parses and validates a string as a valid Social Security Number, with our without dashes.
@@ -21,7 +21,8 @@ import { typeChecks } from './lib/type-checks'
 const SSN = function (input, options = this || {}) {
   const { name, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   const ssnMatch = input.match(ssnRe)
   if (ssnMatch === null) {

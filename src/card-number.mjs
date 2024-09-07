@@ -3,7 +3,7 @@ import luhn from 'luhn'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 const seps = '[ -]'
 const formattedNumberRe = new RegExp(`^(?:\\d${seps}?)+\\d$`)
@@ -35,7 +35,8 @@ const CardNumber = function (input, options = this || {}) {
     status,
   } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   if (formattedNumberRe.test(input) === false) {
     throw new ArgumentInvalidError({

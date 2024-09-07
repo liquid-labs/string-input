@@ -4,7 +4,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 const anyDigitsRe = /^-?\d+$/
 
@@ -29,7 +29,8 @@ const anyDigitsRe = /^-?\d+$/
 const Integer = function (input, options = this || {}) {
   const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   if (allowLeadingZeros !== true && input.match(integerRe) === null) {
     let issue = 'does not appear to be an integer'

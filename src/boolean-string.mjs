@@ -4,7 +4,7 @@ import { floatRe } from 'regex-repo'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { possibleBooleanValues } from './lib/possible-boolean-values'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Parses and validates an input string as a boolean. By default recognizes true/t/yes/y/any positive number as `true`
@@ -35,7 +35,8 @@ const BooleanString = function (input, options = this || {}) {
     treatNegativeValuesAsFalse = false,
   } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   input = input.toLowerCase()
 

@@ -23,6 +23,7 @@ const validInput = [
     { validateValue : (value) => value.address.endsWith('bar.com') },
     'foo@bar.com',
   ],
+  ['', {}, undefined],
 ]
 
 const failureInput = [
@@ -98,8 +99,15 @@ const failureInput = [
 describe('Email', () => {
   test.each(validInput)(
     '%s with options %p => %s',
-    (input, options, expected) =>
-      expect(Email(input, options).address).toBe(expected)
+    (input, options, expected) => {
+      const emailData = Email(input, options)
+      if (expected === undefined) {
+        expect(emailData).toBe(undefined)
+      }
+      else {
+        expect(emailData.address).toBe(expected)
+      }
+    }
   )
 
   test.each(failureInput)(

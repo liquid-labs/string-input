@@ -26,6 +26,7 @@ describe('TimeOfDay', () => {
       0,
       0,
     ],
+    ['', {}, undefined, undefined, undefined, undefined],
   ]
 
   const invalidInput = [
@@ -69,6 +70,10 @@ describe('TimeOfDay', () => {
     '%s, options %p => hours: %s, minutes: %s, seconds: %s, frac seconds: %s',
     (input, options, hours, mins, secs, fracSecs) => {
       const time = TimeOfDay(input, options)
+      if (hours === undefined) {
+        expect(time).toBe(undefined)
+        return
+      }
       expect(time.getHours()).toBe(hours)
       expect(time.getMinutes()).toBe(mins)
       expect(time.getSeconds()).toBe(secs)

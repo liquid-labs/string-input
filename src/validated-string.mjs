@@ -2,7 +2,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Validates a string according to the provided options. This is useful when there's not a pre-built type like `Email`.
@@ -40,7 +40,8 @@ const ValidatedString = function (input, options = this || {}) {
   } = options
   let { matchRe } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   if (after !== undefined && [after, input].sort()[0] !== after) {
     throw new ArgumentInvalidError({

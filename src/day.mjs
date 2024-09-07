@@ -5,7 +5,7 @@ import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { convertMonthName } from './lib/date-time/convert-month-name'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Represents the components of specific day.
@@ -40,7 +40,8 @@ const Day = function (input, options = this || {}) {
   const { name, status } = options
   let { max, min } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   const intlMatch = input.match(intlDateRe)
   const usMatch = input.match(usDateRe)

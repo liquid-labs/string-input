@@ -1,7 +1,7 @@
 import { getLatestTLDs, validateEmail } from 'true-email-validator'
 import { ArgumentInvalidError } from 'standard-error-set'
 
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Email address and components.
@@ -106,7 +106,8 @@ import { typeChecks } from './lib/type-checks'
 const Email = function (input, options = this || {}) {
   const { name, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   if (options.validateValue !== undefined) {
     options.validateResult = options.validateValue

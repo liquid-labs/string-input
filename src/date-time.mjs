@@ -9,7 +9,7 @@ import { makeDateTimeString } from './lib/date-time/make-date-time-string'
 import { processIdiomaticDateTime } from './lib/date-time/process-idiomatic-date-time'
 import { processISO8601DateTime } from './lib/date-time/process-iso-8601-date-time'
 import { processRFC2822DateTime } from './lib/date-time/process-rfc-2822-date-time'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Date-time components.
@@ -62,7 +62,8 @@ const DateTime = function (input, options = this || {}) {
   const { name, localTimezone, noEod, status = 400 } = options
   let { min, max } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   let value
 

@@ -3,7 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 const leadingZeroRe = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and '0.xx'
 
@@ -28,7 +28,8 @@ const leadingZeroRe = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and
 const Numeric = function (input, options = this || {}) {
   const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   if (allowLeadingZeros !== true && leadingZeroRe.test(input) === true) {
     throw new ArgumentInvalidError({

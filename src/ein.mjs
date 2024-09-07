@@ -3,7 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Validates the input as a valid EIN.
@@ -21,7 +21,8 @@ import { typeChecks } from './lib/type-checks'
 const EIN = function (input, options = this || {}) {
   const { name, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') { return undefined }
 
   const einMatch = input.match(einRe)
   if (einMatch === null) {

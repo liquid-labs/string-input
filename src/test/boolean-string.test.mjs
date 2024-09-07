@@ -18,6 +18,7 @@ const validInput = [
   ['1.2e5', undefined, true],
   ['0e5', undefined, false],
   ['-1', { treatNegativeValuesAsFalse : true }, false],
+  ['', {}, undefined],
 ]
 
 describe('BooleanString', () => {
