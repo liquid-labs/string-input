@@ -59,6 +59,7 @@ describe('CardNumber', () => {
       { validateValue : (value, { name }) => `Card number '${name}' BAD!` },
       'BAD!',
     ],
+    [ '', { required : true }, 'is required\\.$']
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]

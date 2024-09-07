@@ -191,6 +191,7 @@ describe('DateTime', () => {
         { name : 'foo', min : 'bar' },
         "'foo' constraint 'min' with value 'bar' does not contain a recognizable time component\\.$",
       ],
+      ['', { required: true }, 'is required\\.$'],
     ])
 
   test.each(validInput)(

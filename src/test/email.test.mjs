@@ -89,6 +89,7 @@ const failureInput = [
     { validateValue : () => undefined },
     'failed custom result validation',
   ],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'foo'
   params[2] = "argument 'foo'.*?" + params[2]

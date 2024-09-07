@@ -59,6 +59,7 @@ describe('TimeOfDay', () => {
       { validateValue : (value) => value.getSeconds() !== 0 },
       'failed custom value validation',
     ],
+    ['', { required : true }, 'is required\\.$'],
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]

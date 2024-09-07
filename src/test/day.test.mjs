@@ -39,7 +39,8 @@ describe('Day', () => {
   const failureInput = [
     [undefined, {}, "is 'undefined'\\.$"],
     [null, {}, "is 'null'\\.$"],
-    [12, {}, "type 'string' is wrong type. Received type 'number'.$"],
+    [12, {}, "type 'string' is wrong type. Received type 'number'\\.$"],
+    ['', { required: true }, "is required\\.$"],
     ['01.01.01', {}, 'is ambiguous. Try specifying four digit year'],
     ['foo', {}, 'not recognized'],
     ['2024-02-30', {}, 'invalid day'], // day overflow,

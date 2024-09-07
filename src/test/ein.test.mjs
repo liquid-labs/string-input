@@ -44,6 +44,7 @@ const failureInput = [
     },
     'secret is abc',
   ],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'foo'
   params[2] = "argument 'foo'.*?" + params[2]

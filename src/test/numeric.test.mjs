@@ -27,6 +27,7 @@ const failureInput = [
   ['1.6', { max : 1.5 }, "less than or equal to '1.5'"],
   ['1.4', { min : 1.5 }, "greater than or equal to '1.5'"],
   ['1.6', { divisibleBy : 1.5 }, "divisible by '1.5'"],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'foo'
   params[2] = "argument 'foo'.*?" + params[2]

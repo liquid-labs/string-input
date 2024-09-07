@@ -28,6 +28,7 @@ const failureInput = [
     { validateValue : (value) => value.startsWith('2') },
     'failed custom value validation',
   ],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'foo'
   params[2] = "argument 'foo'.*?" + params[2]
