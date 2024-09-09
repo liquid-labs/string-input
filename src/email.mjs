@@ -46,8 +46,11 @@ import { standardChecks } from './lib/standard-checks'
  * - performs extra validation for known provider domains google.com and hotmail.com.
  *
  * Options can be explicitly defined to allow for a more liberal or restrictive validation.
- *
- * This type uses [true-email-validator](https://github.com/liquid-labs/true-email-validator/) under the hood.
+ * 
+ * These options are largely determined by the the
+ * [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
+ * [`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function, 
+ * which is used internally to validate the email. All options are passed directly to the `validateEmail()` function.
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
@@ -142,15 +145,20 @@ Email.toString = () => Email.description
 export {
   Email,
   /**
-   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
-   * International domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain will be
-   * present in the results object as both represent valid domains from a user's point of view. The resolved result can
-   * be passed to the `Email` ``
+   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The 
+   * resolved result can be passed to the {@link Email} type function `allowedTLDs` option.
+   * `
+   * Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain 
+   * will be present in the results object as both represent valid domains from a user's point of view.
+   * 
+   * This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/) 
+   * module.
    * @function
    * @returns {Promise<object>} A Promise resolving to an object whose keys are valid domains; the value of each entry
    *   is `true`. ASCII characters are always lowercased, but the international domains are not transformed after
    *   decoding and may contain uppercase non-ASCII unicode characters per [RFC 4343](https://www.rfc-editor.org/rfc/
    *   rfc4343).
+   * @category Utils
    */
   getLatestTLDs
 }

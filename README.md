@@ -109,12 +109,13 @@ _API generated with [dmd-readme-api](https://www.npmjs.com/package/dmd-readme-ap
   - [`Day()`](#Day): Parses and validates input string as a specific day (date).
   - [`EIN()`](#EIN): Validates the input as a valid EIN.
   - [`Email()`](#Email): Parses and validates an input string as a valid email address according to RFC 5322 (email messaging), RFC 6531/6532 (internationalized email), and RFC 5890 (internationalized domain names).
-  - [`getLatestTLDs()`](#getLatestTLDs): Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
   - [`Integer()`](#Integer): Parses and validates an input string as an integer.
   - [`Numeric()`](#Numeric): Parses and validates an input string as a valid number (float).
   - [`SSN()`](#SSN): Parses and validates a string as a valid Social Security Number, with our without dashes.
   - [`TimeOfDay()`](#TimeOfDay): Parses and validates the input as a time-of-day.
   - [`ValidatedString()`](#ValidatedString): Validates a string according to the provided options.
+  - <span id="global-function-Utils-index"></span>_Utils_
+    - [`getLatestTLDs()`](#getLatestTLDs): Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
 <span id="global-typedef-index"></span>
 - Typedefs:
   - [`DateTimeData`](#DateTimeData): Date-time components.
@@ -191,7 +192,7 @@ order.
 **Returns**: [`DateTimeData`](#DateTimeData) - The date-time data.
 
 <a id="Day"></a>
-### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L41)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Day(input, options)` ⇒ [`DayData`](#DayData) <sup>↱<sup>[source code](./src/day.mjs#L43)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates input string as a specific day (date). Can handle year first and US format, with or without
 delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
@@ -206,8 +207,8 @@ delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
 | [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
 | [`options.max`] | `string` \| `number` \| `Date` |  | The latest day to be considered valid. |
 | [`options.min`] | `string` \| `number` \| `Date` |  | The earliest day to be considered valid. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: [`DayData`](#DayData) - The day/date data.
 
@@ -230,7 +231,7 @@ Validates the input as a valid EIN.
 **Returns**: `string` - A canonically formatted EIN 'XX-XXXXXXX'.
 
 <a id="Email"></a>
-### `Email(input, options)` ⇒ [`EmailData`](#EmailData) <sup>↱<sup>[source code](./src/email.mjs#L106)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Email(input, options)` ⇒ [`EmailData`](#EmailData) <sup>↱<sup>[source code](./src/email.mjs#L111)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as a valid email address according to RFC 5322 (email messaging), RFC 6531/6532
 (internationalized email), and RFC 5890 (internationalized domain names). Validation happens in two general steps.
@@ -252,7 +253,10 @@ specification, and
 
 Options can be explicitly defined to allow for a more liberal or restrictive validation.
 
-This type uses [true-email-validator](https://github.com/liquid-labs/true-email-validator/) under the hood.
+These options are largely determined by the the
+[true-email-validator](https://github.com/liquid-labs/true-email-validator/)
+[`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function, 
+which is used internally to validate the email. All options are passed directly to the `validateEmail()` function.
 
 
 | Param | Type | Default | Description |
@@ -260,7 +264,7 @@ This type uses [true-email-validator](https://github.com/liquid-labs/true-email-
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowComments` | `boolean` |  | If true, allows embedded comments in the address like '(comment)   john@foo.com', which are disallowed by default. Note, the comments, if present, will be extracted regardless of   this setting, the result `valid` field will just be set false and an issue will be reported. |
 | `options.allowAnyDomain` | `boolean` |  | If true, then overrides all default restrictions and format checks of the   domain value and allows any syntactically valid domain value except a localhost name or address (unless   `allowLocalHost` is also set true). Note that impossible sub-domain labels (e.g., a label more than 63 characters   long or a single digit) or TLDs (e.g. '123') will still trigger an invalid result. Otherwise, the domain value is   verified as recognizable as a domain name (as opposed to an IP address, for instance). |
 | `options.allowAnyDomainLiteral` | `boolean` |  | If true, then overrides default restrictions and format checks of   domain literal values and allows any syntactically valid domain literal value that is not a localhost address (   unless `allowLocalhost` is also true). In general, domain literal values point to IPV4/6 addresses and the   validation will (when `allowIP4` and/or`allowIPV6` are true), allow valid IP address values but would reject other   domain literal values, unless this value is set true. Note, if this value is true then allowIPV4` and `allowIPV6`   are essentially ignored. |
@@ -277,26 +281,13 @@ This type uses [true-email-validator](https://github.com/liquid-labs/true-email-
 | `options.noPlusEmails` | `boolean` |  | If true, then '+' is not allowed in the username/local part. This is   equivalent to setting `excludeChars = '+'.` |
 | `options.noTLDOnly` | `boolean` |  | If true, then disallows TLD only domains in an address like 'john@com'. |
 | `options.noNonASCIILocalPart` | `boolean` |  | If true, then disallows non-ASCII/international characters in the   username/local part of the address. |
-| `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: [`EmailData`](#EmailData) - Email data object.
 
-<a id="getLatestTLDs"></a>
-### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L153)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
-
-Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
-International domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain will be
-present in the results object as both represent valid domains from a user's point of view. The resolved result can
-be passed to the `Email` ``
-
-**Returns**: `Promise.<object>` - A Promise resolving to an object whose keys are valid domains; the value of each entry
-  is `true`. ASCII characters are always lowercased, but the international domains are not transformed after
-  decoding and may contain uppercase non-ASCII unicode characters per [RFC 4343](https://www.rfc-editor.org/rfc/
-  rfc4343).
-
 <a id="Integer"></a>
-### `Integer(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/integer.mjs#L29)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Integer(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/integer.mjs#L31)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as an integer.
 
@@ -306,18 +297,18 @@ Parses and validates an input string as an integer.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowLeadingZeros` | `boolean` |  | Overrides default behavior which rejects strings with leading zeros. |
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not itself be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
 | `options.min` | `number` |  | The smallest value considered valid. |
-| `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: `number` - A primitive integer.
 
 <a id="Numeric"></a>
-### `Numeric(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/numeric.mjs#L28)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `Numeric(input, options)` ⇒ `number` <sup>↱<sup>[source code](./src/numeric.mjs#L30)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates an input string as a valid number (float).
 
@@ -327,18 +318,18 @@ Parses and validates an input string as a valid number (float).
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.allowLeadingZeros` | `boolean` |  | Overrides default behavior which rejects strings with leading zeros. |
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
 | `options.min` | `number` |  | The smallest value considered valid. |
-| `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: `number` - A primitive number.
 
 <a id="SSN"></a>
-### `SSN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ssn.mjs#L21)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `SSN(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/ssn.mjs#L23)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates a string as a valid Social Security Number, with our without dashes.
 
@@ -348,14 +339,14 @@ Parses and validates a string as a valid Social Security Number, with our withou
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
-| `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: `string` - A canonically formatted SSN like 'XX-XXX-XXXX'.
 
 <a id="TimeOfDay"></a>
-### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L40)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `TimeOfDay(input, options)` ⇒ [`TimeData`](#TimeData) <sup>↱<sup>[source code](./src/time-of-day.mjs#L42)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Parses and validates the input as a time-of-day. Because there is no date component and some timezones would be
 ambiguous, this type does not recognize nor accepts timezone specification.
@@ -366,12 +357,12 @@ ambiguous, this type does not recognize nor accepts timezone specification.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.failureStatus`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
 | `options.max` | `string` |  | A string, parseable by this function, representing the latest valid time. |
 | `options.min` | `string` |  | A string, parseable by this function, representing the earliest valid time. |
 | `options.noEod` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
-| `options.validateInput` | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| `options.validateValue` | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
 
 **Returns**: [`TimeData`](#TimeData) - The parsed time data.
 
@@ -474,6 +465,25 @@ Represents the time components.
 | `getFractionalSeconds()` | `function` | The fractional seconds component of the date-time; this will   always be a float less than 1. |
 | `getMilliseconds()` | `function` | The fractional seconds component of the date-time expressed as   milliseconds (integer). |
 | `valueOf()` | `function` | Seconds (including fractional seconds) since 00:00:00. |
+
+<a id="getLatestTLDs"></a>
+### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L163)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+
+Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The 
+resolved result can be passed to the [`Email`](#Email) type function `allowedTLDs` option.
+`
+Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain 
+will be present in the results object as both represent valid domains from a user's point of view.
+
+This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/) 
+module.
+
+**Returns**: `Promise.<object>` - A Promise resolving to an object whose keys are valid domains; the value of each entry
+  is `true`. ASCII characters are always lowercased, but the international domains are not transformed after
+  decoding and may contain uppercase non-ASCII unicode characters per [RFC 4343](https://www.rfc-editor.org/rfc/
+  rfc4343).
+
+__Category__: [Utils](#global-function-Utils-index)
 
 ## Common description field and `toString()`
 
