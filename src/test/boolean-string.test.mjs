@@ -20,12 +20,15 @@ describe('BooleanString', () => {
     ['0e5', undefined, false],
     ['-1', { treatNegativeValuesAsFalse : true }, false],
     ['', {}, undefined],
-    ['true', { required: true }, true],
+    ['true', { required : true }, true],
   ]
 
-  const noAbbreviationsRe = /is disallowed abbreviated value\. Use true\/false, yes\/no, or 0\/positive number\.$/
-  const noYesNoRe = /is disallowed yes\/no value\. Use true\/false, t\/f, or 0\/positive number\.$/
-  const noNumericRe = /is disallowed numeric value. Use true\/false, t\/f, yes\/no, or y\/n\.$/
+  const noAbbreviationsRe =
+    /is disallowed abbreviated value\. Use true\/false, yes\/no, or 0\/positive number\.$/
+  const noYesNoRe =
+    /is disallowed yes\/no value\. Use true\/false, t\/f, or 0\/positive number\.$/
+  const noNumericRe =
+    /is disallowed numeric value. Use true\/false, t\/f, yes\/no, or y\/n\.$/
   const unrecognizedRe = /could not be parsed as a boolean value/
 
   const invalidInput = [
@@ -46,7 +49,7 @@ describe('BooleanString', () => {
     ['foo', {}, unrecognizedRe],
     ['trueeeee', {}, unrecognizedRe],
     ['1.0.0', {}, unrecognizedRe],
-    ['', { required: true }, /is required\.$/],
+    ['', { required : true }, /is required\.$/],
   ]
 
   test.each(validInput)('%s, options %p -> %s', (input, options, expected) =>
@@ -57,6 +60,9 @@ describe('BooleanString', () => {
       /is ambiguous negative numeric value\. Use true\/false, t\/f, yes\/no, y\/n, or 0\/positive number\.$/
     ))
 
-  test.each(invalidInput)("'%s', options %p -> %s", (input, options, errorMatch) =>
-    expect(() => BooleanString(input, options)).toThrow(errorMatch))
+  test.each(invalidInput)(
+    "'%s', options %p -> %s",
+    (input, options, errorMatch) =>
+      expect(() => BooleanString(input, options)).toThrow(errorMatch)
+  )
 })

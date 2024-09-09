@@ -46,10 +46,10 @@ import { standardChecks } from './lib/standard-checks'
  * - performs extra validation for known provider domains google.com and hotmail.com.
  *
  * Options can be explicitly defined to allow for a more liberal or restrictive validation.
- * 
+ *
  * These options are largely determined by the the
  * [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
- * [`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function, 
+ * [`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function,
  * which is used internally to validate the email. All options are passed directly to the `validateEmail()` function.
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
@@ -100,11 +100,11 @@ import { standardChecks } from './lib/standard-checks'
  * @param {boolean} options.noTLDOnly - If true, then disallows TLD only domains in an address like 'john@com'.
  * @param {boolean} options.noNonASCIILocalPart - If true, then disallows non-ASCII/international characters in the
  *   username/local part of the address.
- * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
- *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
  *   return values.
- * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
- *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
  *   values.
  * @returns {EmailData} Email data object.
  */
@@ -112,7 +112,9 @@ const Email = function (input, options = this || {}) {
   const { name, status } = options
 
   input = standardChecks({ input, name, status, ...options })
-  if (input === '') { return undefined }
+  if (input === '') {
+    return undefined
+  }
 
   if (options.validateValue !== undefined) {
     options.validateResult = options.validateValue
@@ -145,13 +147,13 @@ Email.toString = () => Email.description
 export {
   Email,
   /**
-   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The 
+   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The
    * resolved result can be passed to the {@link Email} type function `allowedTLDs` option.
    * `
-   * Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain 
+   * Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain
    * will be present in the results object as both represent valid domains from a user's point of view.
-   * 
-   * This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/) 
+   *
+   * This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
    * module.
    * @function
    * @returns {Promise<object>} A Promise resolving to an object whose keys are valid domains; the value of each entry

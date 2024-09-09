@@ -50,7 +50,9 @@ const failureInput = [
 
 describe('ValidatedString', () => {
   test.each(validInput)('%s with options %p passes', (input, options) =>
-    expect(ValidatedString(input, options)).toBe(input === '' ? undefined : input))
+    expect(ValidatedString(input, options)).toBe(
+      input === '' ? undefined : input
+    ))
 
   test.each(failureInput)(
     '%s and options %p throws error matching %s',

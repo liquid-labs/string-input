@@ -31,11 +31,11 @@ import { standardChecks } from './lib/standard-checks'
  * @param {string} options.max - A string, parseable by this function, representing the latest valid time.
  * @param {string} options.min - A string, parseable by this function, representing the earliest valid time.
  * @param {boolean} options.noEod - Disallows the special times '24:00:00', which represents the last moment of the day.
- * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
- *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
  *   return values.
- * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
- *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
  *   values.
  * @returns {TimeData} The parsed time data.
  */
@@ -44,7 +44,9 @@ const TimeOfDay = function (input, options = this || {}) {
   let { min, max } = options
 
   input = standardChecks({ input, name, status, ...options })
-  if (input === '') { return undefined }
+  if (input === '') {
+    return undefined
+  }
 
   const militaryTimeMatch = input.match(militaryTimeRe)
   const timeMatch = input.match(timeRe)

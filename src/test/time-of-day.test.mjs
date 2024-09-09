@@ -74,6 +74,7 @@ describe('TimeOfDay', () => {
       const time = TimeOfDay(input, options)
       if (hours === undefined) {
         expect(time).toBe(undefined)
+
         return
       }
       expect(time.getHours()).toBe(hours)

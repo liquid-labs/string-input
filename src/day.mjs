@@ -26,17 +26,17 @@ import { standardChecks } from './lib/standard-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. This 
+ * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. This
  *   can be used to mark arguments specified by in code or configurations without user input.
- * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError` 
+ * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError`
  *   is thrown.
  * @param {string|number|Date} [options.max = undefined] - The latest day to be considered valid.
  * @param {string|number|Date} [options.min = undefined] - The earliest day to be considered valid.
- * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
- *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
  *   return values.
- * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
- *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
  *   values.
  * @returns {DayData} The day/date data.
  */
@@ -45,7 +45,9 @@ const Day = function (input, options = this || {}) {
   let { max, min } = options
 
   input = standardChecks({ input, name, status, ...options })
-  if (input === '') { return undefined }
+  if (input === '') {
+    return undefined
+  }
 
   const intlMatch = input.match(intlDateRe)
   const usMatch = input.match(usDateRe)

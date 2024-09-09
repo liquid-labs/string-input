@@ -196,7 +196,7 @@ describe('DateTime', () => {
         { name : 'foo', min : 'bar' },
         "'foo' constraint 'min' with value 'bar' does not contain a recognizable time component\\.$",
       ],
-      ['', { required: true }, 'is required\\.$'],
+      ['', { required : true }, 'is required\\.$'],
     ])
 
   test.each(validInput)(
@@ -205,6 +205,7 @@ describe('DateTime', () => {
       const result = DateTime(input, options)
       if (expected === undefined) {
         expect(result).toBe(expected)
+
         return
       }
       expect(result.getYear()).toBe(expected[0])

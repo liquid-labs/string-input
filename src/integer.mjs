@@ -20,11 +20,11 @@ const anyDigitsRe = /^-?\d+$/
  *   which need not itself be an integer).
  * @param {number} options.max - The largest value considered valid.
  * @param {number} options.min - The smallest value considered valid.
- * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
- *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
  *   return values.
- * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
- *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
  *   values.
  * @returns {number} A primitive integer.
  */
@@ -32,7 +32,9 @@ const Integer = function (input, options = this || {}) {
   const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
 
   input = standardChecks({ input, name, status, ...options })
-  if (input === '') { return undefined }
+  if (input === '') {
+    return undefined
+  }
 
   if (allowLeadingZeros !== true && input.match(integerRe) === null) {
     let issue = 'does not appear to be an integer'

@@ -12,7 +12,11 @@ describe('CardNumber', () => {
     ['5019717010103742', { iins : [/^50/] }, '5019717010103742'],
     ['5019717010103742', { iins : ['490-501'] }, '5019717010103742'],
     ['0123456789999', { iins : ['012-200'] }, '0123456789999'],
-    ['0123-4567-89999', { validateInput : (input) => input.startsWith('0') }, '0123456789999'],
+    [
+      '0123-4567-89999',
+      { validateInput : (input) => input.startsWith('0') },
+      '0123456789999',
+    ],
     [
       '0123-4567-89999',
       { validateValue : (value) => /-/.test(value) === false },
@@ -60,7 +64,7 @@ describe('CardNumber', () => {
       { validateValue : (value, { name }) => `Card number '${name}' BAD!` },
       'BAD!',
     ],
-    [ '', { required : true }, 'is required\\.$']
+    ['', { required : true }, 'is required\\.$'],
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]
@@ -70,8 +74,9 @@ describe('CardNumber', () => {
 
   test.each(validInput)(
     'validates number %s with options %p',
-    (acctNumber, options, expected) => 
-      expect(CardNumber(acctNumber, options)).toBe(expected))
+    (acctNumber, options, expected) =>
+      expect(CardNumber(acctNumber, options)).toBe(expected)
+  )
 
   test.each(failureInput)(
     '%s and options %p throws error matching %s',

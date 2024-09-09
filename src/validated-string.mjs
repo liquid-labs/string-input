@@ -11,23 +11,23 @@ import { standardChecks } from './lib/standard-checks'
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
  * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
- * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError` 
+ * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError`
  *   is thrown.
- * @param {string} [options.after = undefined]- The input must be or lexicographically sort after this string.
+ * @param {string} [options.after = undefined] - The input must be or lexicographically sort after this string.
  * @param {string} [options.before = undefined] - The input must be or lexicographically sort before this string.
  * @param {string} [options.endsWith = undefined] - The input string must end with the indicated string.
  * @param {number} [options.maxLength = undefined] - The longest valid input string in terms of characters.
- * @param {string|RegExp} [options.matchRe = undefined] - The input string must match the provided regular expression. 
+ * @param {string|RegExp} [options.matchRe = undefined] - The input string must match the provided regular expression.
  *   Specifying a string which is an invalid regular expression will cause an exception to be thrown.
  * @param {number} [options.minLength = undefined] - The shortest valid input string in terms of characters.
- * @param {Array.<string>} [options.oneOf = undefined] - The input string must be exactly one of the members of this 
+ * @param {Array.<string>} [options.oneOf = undefined] - The input string must be exactly one of the members of this
  *   array.
- * @param {string} [options.startsWith = undefined]- The input string must start with the indicated string.
- * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
- *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ * @param {string} [options.startsWith = undefined] - The input string must start with the indicated string.
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
  *   return values.
- * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
- *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
  *   values.
  * @returns {string} Returns the input.
  */
@@ -46,7 +46,9 @@ const ValidatedString = function (input, options = this || {}) {
   let { matchRe } = options
 
   input = standardChecks({ input, name, status, ...options })
-  if (input === '') { return undefined }
+  if (input === '') {
+    return undefined
+  }
 
   if (after !== undefined && [after, input].sort()[0] !== after) {
     throw new ArgumentInvalidError({
