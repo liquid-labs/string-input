@@ -92,8 +92,8 @@ const failureInput = [
     'failed custom result validation',
   ],
   ['', { required : true }, 'is required\\.$'],
-  [ '', { required: true, message: 'bar' }, '^bar$', false],
-  [ 123, { message: 'bar' }, '^bar$', false],
+  ['', { required : true, message : 'bar' }, '^bar$', false],
+  [123, { message : 'bar' }, '^bar$', false],
 ].map(standardFailureDataMap)
 
 describe('Email', () => {

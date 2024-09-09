@@ -30,8 +30,8 @@ const failureInput = [
   ['1.4', { min : 1.5 }, "greater than or equal to '1.5'"],
   ['1.6', { divisibleBy : 1.5 }, "divisible by '1.5'"],
   ['', { required : true }, 'is required\\.$'],
-  [ '', { required: true, message: 'bar' }, '^bar$', false],
-  [ 123, { message: 'bar' }, '^bar$', false],
+  ['', { required : true, message : 'bar' }, '^bar$', false],
+  [123, { message : 'bar' }, '^bar$', false],
 ].map(standardFailureDataMap)
 
 describe('Numeric', () => {

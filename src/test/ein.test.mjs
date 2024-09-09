@@ -47,8 +47,8 @@ const failureInput = [
     'secret is abc',
   ],
   ['', { required : true }, 'is required\\.$'],
-  [ '', { required: true, message: 'bar' }, '^bar$', false],
-  [ 123, { message: 'bar' }, '^bar$', false],
+  ['', { required : true, message : 'bar' }, '^bar$', false],
+  [123, { message : 'bar' }, '^bar$', false],
 ].map(standardFailureDataMap)
 
 describe('EIN', () => {

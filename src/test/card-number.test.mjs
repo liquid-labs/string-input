@@ -66,7 +66,7 @@ describe('CardNumber', () => {
       'BAD!',
     ],
     ['', { required : true }, 'is required\\.$'],
-    ['', { required : true, message: 'foo' }, '^foo$', false],
+    ['', { required : true, message : 'foo' }, '^foo$', false],
   ].map(standardFailureDataMap)
 
   test.each(validInput)(

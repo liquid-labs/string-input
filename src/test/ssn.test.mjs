@@ -31,8 +31,8 @@ const failureInput = [
     'failed custom value validation',
   ],
   ['', { required : true }, 'is required\\.$'],
-  [ '', { required: true, message: 'bar' }, '^bar$', false],
-  [ 123, { message: 'bar' }, '^bar$', false],
+  ['', { required : true, message : 'bar' }, '^bar$', false],
+  [123, { message : 'bar' }, '^bar$', false],
 ].map(standardFailureDataMap)
 
 describe('SSN', () => {

@@ -48,8 +48,8 @@ describe('Integer', () => {
       'failed custom value validation',
     ],
     ['', { required : true }, 'is required\\.$'],
-    ['', { required: true, message: 'foo' }, '^foo$', false],
-    [1, { message: 'foo'}, '^foo$', false],
+    ['', { required : true, message : 'foo' }, '^foo$', false],
+    [1, { message : 'foo' }, '^foo$', false],
   ].map(standardFailureDataMap)
   // ^^ In order to keep the `failureInput` compact, we append the `name` and add the name check to the regex here
 

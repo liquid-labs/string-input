@@ -108,8 +108,8 @@ describe('Day', () => {
       { validateValue : (value) => value.getYear() === 2023 },
       'failed custom value validation',
     ],
-    [ '', { required: true, message: 'bar' }, '^bar$', false],
-    [ 123, { message: 'bar' }, '^bar$', false],
+    ['', { required : true, message : 'bar' }, '^bar$', false],
+    [123, { message : 'bar' }, '^bar$', false],
   ].map(standardFailureDataMap)
 
   test.each(validInput)(
