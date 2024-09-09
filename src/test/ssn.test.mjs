@@ -1,4 +1,5 @@
 import { SSN } from '../ssn'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 const validInput = [
   ['123-45-6789', undefined, '123-45-6789'],
@@ -30,12 +31,9 @@ const failureInput = [
     'failed custom value validation',
   ],
   ['', { required : true }, 'is required\\.$'],
-].map((params) => {
-  params[1].name = 'foo'
-  params[2] = "argument 'foo'.*?" + params[2]
-
-  return params
-})
+  [ '', { required: true, message: 'bar' }, '^bar$', false],
+  [ 123, { message: 'bar' }, '^bar$', false],
+].map(standardFailureDataMap)
 
 describe('SSN', () => {
   test.each(validInput)(

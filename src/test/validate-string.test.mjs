@@ -1,4 +1,5 @@
 import { ValidatedString } from '../validated-string'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 const validInput = [
   ['foo', undefined],
@@ -41,12 +42,9 @@ const failureInput = [
     'failed custom value validation',
   ],
   ['', { required : true }, 'is required\\.$'],
-].map((params) => {
-  params[1].name = 'bar'
-  params[2] = "argument 'bar'.*?" + params[2]
-
-  return params
-})
+  [ '', { required: true, message: 'bar' }, '^bar$', false],
+  [ 123, { message: 'bar' }, '^bar$', false],
+].map(standardFailureDataMap)
 
 describe('ValidatedString', () => {
   test.each(validInput)('%s with options %p passes', (input, options) =>

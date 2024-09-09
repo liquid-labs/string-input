@@ -1,4 +1,5 @@
 import { Day } from '../day'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 describe('Day', () => {
   const validInput = [
@@ -107,12 +108,9 @@ describe('Day', () => {
       { validateValue : (value) => value.getYear() === 2023 },
       'failed custom value validation',
     ],
-  ].map((params) => {
-    params[1].name = 'foo'
-    params[2] = "argument 'foo'.*?" + params[2]
-
-    return params
-  })
+    [ '', { required: true, message: 'bar' }, '^bar$', false],
+    [ 123, { message: 'bar' }, '^bar$', false],
+  ].map(standardFailureDataMap)
 
   test.each(validInput)(
     '%s and options %p => year: %p, month: %p, day of month: %p',

@@ -50,6 +50,8 @@ describe('BooleanString', () => {
     ['trueeeee', {}, unrecognizedRe],
     ['1.0.0', {}, unrecognizedRe],
     ['', { required : true }, /is required\.$/],
+    ['', { required : true, message: 'foo' }, /^foo$/],
+    [true, { message: 'foo' }, /^foo$/],
   ]
 
   test.each(validInput)('%s, options %p -> %s', (input, options, expected) =>

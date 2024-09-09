@@ -1,4 +1,5 @@
 import { Email } from '../email'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 const validInput = [
   ['foo@bar.com', undefined, 'foo@bar.com'],
@@ -91,12 +92,9 @@ const failureInput = [
     'failed custom result validation',
   ],
   ['', { required : true }, 'is required\\.$'],
-].map((params) => {
-  params[1].name = 'foo'
-  params[2] = "argument 'foo'.*?" + params[2]
-
-  return params
-})
+  [ '', { required: true, message: 'bar' }, '^bar$', false],
+  [ 123, { message: 'bar' }, '^bar$', false],
+].map(standardFailureDataMap)
 
 describe('Email', () => {
   test.each(validInput)(

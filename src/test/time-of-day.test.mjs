@@ -1,4 +1,5 @@
 import { TimeOfDay } from '../time-of-day'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 describe('TimeOfDay', () => {
   const validInput = [
@@ -61,12 +62,9 @@ describe('TimeOfDay', () => {
       'failed custom value validation',
     ],
     ['', { required : true }, 'is required\\.$'],
-  ].map((params) => {
-    params[1].name = 'foo'
-    params[2] = "argument 'foo'.*?" + params[2]
-
-    return params
-  })
+    [ '', { required: true, message: 'bar' }, '^bar$', false],
+    [ 123, { message: 'bar' }, '^bar$', false],
+  ].map(standardFailureDataMap)
 
   test.each(validInput)(
     '%s, options %p => hours: %s, minutes: %s, seconds: %s, frac seconds: %s',

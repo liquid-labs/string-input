@@ -29,9 +29,9 @@ const anyDigitsRe = /^-?\d+$/
  * @returns {number} A primitive integer.
  */
 const Integer = function (input, options = this || {}) {
-  const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
+  const { name, allowLeadingZeros, divisibleBy } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -42,18 +42,18 @@ const Integer = function (input, options = this || {}) {
       issue += '; leading zeroes are not allowed.'
     }
     throw new ArgumentInvalidError({
+      ...options,
       argumentName  : name,
       argumentValue : input,
       issue,
-      status,
     })
   }
   else if (allowLeadingZeros === true && input.match(anyDigitsRe) === null) {
     throw new ArgumentInvalidError({
+      ...options,
       argumentName  : name,
       argumentValue : input,
       issue         : 'does not appear to be an integer (leading zeros allowed)',
-      status,
     })
   }
 
@@ -63,13 +63,13 @@ const Integer = function (input, options = this || {}) {
   )
   checkValidateInput(input, validationOptions)
   const value = parseInt(input)
-  checkMaxMin({ input, max, min, name, status, value })
+  checkMaxMin({ ...options, input, name, value })
   if (divisibleBy !== undefined && value % divisibleBy !== 0) {
     throw new ArgumentInvalidError({
+      ...options,
       argumentName  : name,
       argumentValue : input,
       issue         : `must be divisible by '${divisibleBy}'`,
-      status,
     })
   }
   checkValidateValue(value, validationOptions)
