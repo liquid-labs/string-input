@@ -6,6 +6,14 @@ A library to validate user input strings; compatible with command-line-args.
 
 This package is currently a prototype.
 
+- [Install](#install)
+- [Usage](#usage)
+- [Empty string handling](#empty-string-handling)
+- [Custom validation functions](#custome-validation-functions)
+- [Invoking with context](#invoking-with-context)
+- [API reference](#api-reference)
+- [Common description field and `toString()`](#common-description-field-and-tostring)
+
 ## Install
 
 ```bash
@@ -52,6 +60,10 @@ const options = commandLineArgs(optionSpec)
 ```
 
 See notes on [invoking with context](#invoking-with-context)
+
+## Empty string handling
+
+By default, all [type functions](#global-function-index) accept the empty string ('') as input, which results in a return value of `undefined`. In that case, no other validation checks are performed except for the `required` validation, which, if true, will cause the type function to reject the empty string and throw `ArgumentMissingError`.
 
 ## Custom validation functions
 

@@ -20,6 +20,7 @@ describe('BooleanString', () => {
     ['0e5', undefined, false],
     ['-1', { treatNegativeValuesAsFalse : true }, false],
     ['', {}, undefined],
+    ['true', { required: true }, true],
   ]
 
   const noAbbreviationsRe = /is disallowed abbreviated value\. Use true\/false, yes\/no, or 0\/positive number\.$/

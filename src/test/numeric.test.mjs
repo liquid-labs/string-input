@@ -20,6 +20,7 @@ const validInputs = [
   [' 1', {}, 1],
   ['1 ', {}, 1],
   ['', {}, undefined],
+  ['0', { required : true }, 0],
 ]
 
 const failureInput = [

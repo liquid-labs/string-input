@@ -15,7 +15,8 @@ const validInput = [
   ['foo', { oneOf : ['foo', 'bar'] }],
   ['foo', { validateInput : (input) => input.startsWith('f') }],
   ['foo', { validateValue : (value) => value.startsWith('f') }],
-  ['', {}], // this is a special case in the test
+  ['', {}], // this is a special case in the test since the output 'value' is different than the 'input'
+  ['foo', { required : true }],
 ]
 
 const failureInput = [

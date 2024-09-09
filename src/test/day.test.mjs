@@ -34,6 +34,7 @@ describe('Day', () => {
       2,
     ],
     ['', {}, undefined, undefined, undefined],
+    ['2024-01-05', { required : true }, 2024, 1, 5],
   ]
 
   const failureInput = [

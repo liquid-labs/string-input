@@ -18,6 +18,7 @@ describe('Integer', () => {
     ['12', { validateInput : (input) => input === '12' }, 12],
     ['12', { validateValue : (value) => value === 12 }, 12],
     ['', {}, undefined],
+    ['100', { required : true }, 100],
   ]
 
   const failureInput = [

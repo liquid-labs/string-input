@@ -36,8 +36,8 @@
   },
   "dependencies": {
     "luhn": "^2.4.1",
-    "regex-repo": "^5.0.0",
-    "standard-error-set": "^1.0.0-alpha.9",
+    "regex-repo": "file:.yalc/regex-repo",
+    "standard-error-set": "file:.yalc/standard-error-set",
     "true-email-validator": "^1.0.0-alpha.5"
   },
   "_sdlc": {

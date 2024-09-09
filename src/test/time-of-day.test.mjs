@@ -27,6 +27,7 @@ describe('TimeOfDay', () => {
       0,
     ],
     ['', {}, undefined, undefined, undefined, undefined],
+    ['2105', { required : true }, 21, 5, 0, 0],
   ]
 
   const invalidInput = [

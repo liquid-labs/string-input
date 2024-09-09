@@ -24,6 +24,7 @@ const validInput = [
     'foo@bar.com',
   ],
   ['', {}, undefined],
+  ['foo@bar.com', { required : true }, 'foo@bar.com'],
 ]
 
 const failureInput = [

@@ -19,6 +19,7 @@ describe('CardNumber', () => {
       '0123456789999',
     ],
     ['', {}, undefined],
+    ['378282246310005', { required : true }, '378282246310005'],
   ]
 
   const failureInput = [

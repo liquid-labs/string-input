@@ -26,15 +26,17 @@ import { standardChecks } from './lib/standard-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {string} options.max - A string, parseable by this function, representing the latest valid time.
  * @param {string} options.min - A string, parseable by this function, representing the earliest valid time.
  * @param {boolean} options.noEod - Disallows the special times '24:00:00', which represents the last moment of the day.
- * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
- *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
- * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
- *   [custom validation functions](#custom-validation-functions) section for details on input and return values.
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ *   return values.
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ *   values.
  * @returns {TimeData} The parsed time data.
  */
 const TimeOfDay = function (input, options = this || {}) {

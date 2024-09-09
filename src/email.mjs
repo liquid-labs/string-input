@@ -51,7 +51,7 @@ import { standardChecks } from './lib/standard-checks'
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.allowComments - If true, allows embedded comments in the address like '(comment)
  *   john@foo.com', which are disallowed by default. Note, the comments, if present, will be extracted regardless of
@@ -97,10 +97,12 @@ import { standardChecks } from './lib/standard-checks'
  * @param {boolean} options.noTLDOnly - If true, then disallows TLD only domains in an address like 'john@com'.
  * @param {boolean} options.noNonASCIILocalPart - If true, then disallows non-ASCII/international characters in the
  *   username/local part of the address.
- * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
- *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
- * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
- *   [custom validation functions](#custom-validation-functions) section for details on input and return values.
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original 
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and 
+ *   return values.
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed 
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return 
+ *   values.
  * @returns {EmailData} Email data object.
  */
 const Email = function (input, options = this || {}) {

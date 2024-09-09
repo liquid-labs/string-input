@@ -89,6 +89,11 @@ describe('DateTime', () => {
       [2024, 1, 2, false, 12, 30, 0, 0, undefined],
     ],
     ['', {}, undefined],
+    [
+      '2024-01-02T12:30:40.50Z',
+      { required : true },
+      [2024, 1, 2, false, 12, 30, 40, 0.5, 0],
+    ],
   ]
 
   const failureInput = [
