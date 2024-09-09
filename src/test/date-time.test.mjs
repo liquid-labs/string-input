@@ -88,6 +88,12 @@ describe('DateTime', () => {
       { validateValue : (value) => value.getYear() === 2024 },
       [2024, 1, 2, false, 12, 30, 0, 0, undefined],
     ],
+    ['', {}, undefined],
+    [
+      '2024-01-02T12:30:40.50Z',
+      { required : true },
+      [2024, 1, 2, false, 12, 30, 40, 0.5, 0],
+    ],
   ]
 
   const failureInput = [
@@ -190,12 +196,18 @@ describe('DateTime', () => {
         { name : 'foo', min : 'bar' },
         "'foo' constraint 'min' with value 'bar' does not contain a recognizable time component\\.$",
       ],
+      ['', { required : true }, 'is required\\.$'],
     ])
 
   test.each(validInput)(
     '%s (options: %p) => %p',
     (input, options, expected) => {
       const result = DateTime(input, options)
+      if (expected === undefined) {
+        expect(result).toBe(expected)
+
+        return
+      }
       expect(result.getYear()).toBe(expected[0])
       expect(result.getMonth()).toBe(expected[1])
       expect(result.getDayOfMonth()).toBe(expected[2])

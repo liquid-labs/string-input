@@ -1,7 +1,7 @@
 import { getLatestTLDs, validateEmail } from 'true-email-validator'
 import { ArgumentInvalidError } from 'standard-error-set'
 
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 /**
  * Email address and components.
@@ -47,11 +47,14 @@ import { typeChecks } from './lib/type-checks'
  *
  * Options can be explicitly defined to allow for a more liberal or restrictive validation.
  *
- * This type uses [true-email-validator](https://github.com/liquid-labs/true-email-validator/) under the hood.
+ * These options are largely determined by the the
+ * [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
+ * [`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function,
+ * which is used internally to validate the email. All options are passed directly to the `validateEmail()` function.
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
+ * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
  *   This can be used to mark arguments specified by in code or configurations without user input.
  * @param {boolean} options.allowComments - If true, allows embedded comments in the address like '(comment)
  *   john@foo.com', which are disallowed by default. Note, the comments, if present, will be extracted regardless of
@@ -97,16 +100,21 @@ import { typeChecks } from './lib/type-checks'
  * @param {boolean} options.noTLDOnly - If true, then disallows TLD only domains in an address like 'john@com'.
  * @param {boolean} options.noNonASCIILocalPart - If true, then disallows non-ASCII/international characters in the
  *   username/local part of the address.
- * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
- *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
- * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
- *   [custom validation functions](#custom-validation-functions) section for details on input and return values.
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
+ *   return values.
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
+ *   values.
  * @returns {EmailData} Email data object.
  */
 const Email = function (input, options = this || {}) {
   const { name, status } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') {
+    return undefined
+  }
 
   if (options.validateValue !== undefined) {
     options.validateResult = options.validateValue
@@ -139,15 +147,20 @@ Email.toString = () => Email.description
 export {
   Email,
   /**
-   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA).
-   * International domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain will be
-   * present in the results object as both represent valid domains from a user's point of view. The resolved result can
-   * be passed to the `Email` ``
+   * Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The
+   * resolved result can be passed to the {@link Email} type function `allowedTLDs` option.
+   * `
+   * Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain
+   * will be present in the results object as both represent valid domains from a user's point of view.
+   *
+   * This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
+   * module.
    * @function
    * @returns {Promise<object>} A Promise resolving to an object whose keys are valid domains; the value of each entry
    *   is `true`. ASCII characters are always lowercased, but the international domains are not transformed after
    *   decoding and may contain uppercase non-ASCII unicode characters per [RFC 4343](https://www.rfc-editor.org/rfc/
    *   rfc4343).
+   * @category Utils
    */
   getLatestTLDs
 }

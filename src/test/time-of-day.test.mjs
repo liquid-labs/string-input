@@ -26,6 +26,8 @@ describe('TimeOfDay', () => {
       0,
       0,
     ],
+    ['', {}, undefined, undefined, undefined, undefined],
+    ['2105', { required : true }, 21, 5, 0, 0],
   ]
 
   const invalidInput = [
@@ -58,6 +60,7 @@ describe('TimeOfDay', () => {
       { validateValue : (value) => value.getSeconds() !== 0 },
       'failed custom value validation',
     ],
+    ['', { required : true }, 'is required\\.$'],
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]
@@ -69,6 +72,11 @@ describe('TimeOfDay', () => {
     '%s, options %p => hours: %s, minutes: %s, seconds: %s, frac seconds: %s',
     (input, options, hours, mins, secs, fracSecs) => {
       const time = TimeOfDay(input, options)
+      if (hours === undefined) {
+        expect(time).toBe(undefined)
+
+        return
+      }
       expect(time.getHours()).toBe(hours)
       expect(time.getMinutes()).toBe(mins)
       expect(time.getSeconds()).toBe(secs)

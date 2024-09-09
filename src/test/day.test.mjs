@@ -33,12 +33,15 @@ describe('Day', () => {
       1,
       2,
     ],
+    ['', {}, undefined, undefined, undefined],
+    ['2024-01-05', { required : true }, 2024, 1, 5],
   ]
 
   const failureInput = [
     [undefined, {}, "is 'undefined'\\.$"],
     [null, {}, "is 'null'\\.$"],
-    [12, {}, "type 'string' is wrong type. Received type 'number'.$"],
+    [12, {}, "type 'string' is wrong type. Received type 'number'\\.$"],
+    ['', { required : true }, 'is required\\.$'],
     ['01.01.01', {}, 'is ambiguous. Try specifying four digit year'],
     ['foo', {}, 'not recognized'],
     ['2024-02-30', {}, 'invalid day'], // day overflow,
@@ -115,6 +118,11 @@ describe('Day', () => {
     '%s and options %p => year: %p, month: %p, day of month: %p',
     (input, options, year, month, dayOfMonth) => {
       const day = Day(input, options)
+      if (year === undefined) {
+        expect(day).toBe(undefined)
+
+        return
+      }
       expect(day.getYear()).toBe(year)
       expect(day.getMonth()).toBe(month)
       expect(day.getDayOfMonth()).toBe(dayOfMonth)

@@ -15,6 +15,8 @@ const validInput = [
   ['foo', { oneOf : ['foo', 'bar'] }],
   ['foo', { validateInput : (input) => input.startsWith('f') }],
   ['foo', { validateValue : (value) => value.startsWith('f') }],
+  ['', {}], // this is a special case in the test since the output 'value' is different than the 'input'
+  ['foo', { required : true }],
 ]
 
 const failureInput = [
@@ -38,6 +40,7 @@ const failureInput = [
     { validateValue : (value) => value.startsWith('a') },
     'failed custom value validation',
   ],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'bar'
   params[2] = "argument 'bar'.*?" + params[2]
@@ -47,7 +50,9 @@ const failureInput = [
 
 describe('ValidatedString', () => {
   test.each(validInput)('%s with options %p passes', (input, options) =>
-    expect(ValidatedString(input, options)).toBe(input))
+    expect(ValidatedString(input, options)).toBe(
+      input === '' ? undefined : input
+    ))
 
   test.each(failureInput)(
     '%s and options %p throws error matching %s',

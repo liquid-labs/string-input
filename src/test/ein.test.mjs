@@ -9,6 +9,8 @@ const validInput = [
     '12-3456789',
   ],
   ['123456789', { validateValue : (value) => /-/.test(value) }, '12-3456789'],
+  ['', {}, undefined],
+  ['12-3456789', { required : true }, '12-3456789'],
 ]
 
 const failureInput = [
@@ -43,6 +45,7 @@ const failureInput = [
     },
     'secret is abc',
   ],
+  ['', { required : true }, 'is required\\.$'],
 ].map((params) => {
   params[1].name = 'foo'
   params[2] = "argument 'foo'.*?" + params[2]

@@ -3,7 +3,7 @@ import luhn from 'luhn'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
-import { typeChecks } from './lib/type-checks'
+import { standardChecks } from './lib/standard-checks'
 
 const seps = '[ -]'
 const formattedNumberRe = new RegExp(`^(?:\\d${seps}?)+\\d$`)
@@ -14,17 +14,21 @@ const rawNumberRe = new RegExp(seps, 'g')
  * @param {string} input - The input string.
  * @param {object} options - The validation options.
  * @param {string} options.name - The 'name' by which to refer to the input when generating error messages for the user.
- * @param {number} [options.failureStatus = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors.
- *   This can be used to mark arguments specified by in code or configurations without user input.
- * @param {string[]} options.iins - A list of acceptable Industry Identifier Numbers, or initial card numbers. E.g.,
- *   iins : ['123']` would only accept cards with an account number starting with '123'. If left undefined, then all
- *   otherwise valid card numbers are treated as valid.
- * @param {number[]} options.length - An array of integers defining acceptable card lengths. The default value is any
- *   length between 12 and 19, inclusive.`
- * @param {Function} options.validateInput - A custom validation function which looks at the original input string. See
- *   the [custom validation functions](#custom-validation-functions) section for details on input and return values.
- * @param {Function} options.validateValue - A custom validation function which looks at the transformed value. See the
- *   [custom validation functions](#custom-validation-functions) section for details on input and return values.
+ * @param {number} [options.status = 400] - The HTTP status to use when throwing `ArgumentInvalidError` errors. This
+ *   can be used to mark arguments specified by in code or configurations without user input.
+ * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError`
+ *   is thrown.
+ * @param {string[]} [options.iins = undefined] - A list of acceptable Industry Identifier Numbers, or initial card
+ *   numbers. E.g., iins : ['123']` would only accept cards with an account number starting with '123'. If left
+ *   undefined, then all otherwise valid card numbers are treated as valid.
+ * @param {number[]} [options.lengths = [12, 13, 14, 15, 16, 17, 18, 19]] - An array of integers defining acceptable
+ *   card lengths. The default value is any length between 12 and 19, inclusive.`
+ * @param {Function} [options.validateInput = undefined] - A custom validation function which looks at the original
+ *   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and
+ *   return values.
+ * @param {Function} [options.validateValue = undefined] - A custom validation function which looks at the transformed
+ *   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return
+ *   values.
  * @returns {string} A number-string with no delimiters. Note, there are valid card numbers beginning with 0.
  */
 const CardNumber = function (input, options = this || {}) {
@@ -35,7 +39,10 @@ const CardNumber = function (input, options = this || {}) {
     status,
   } = options
 
-  typeChecks({ input, name, status })
+  input = standardChecks({ input, name, status, ...options })
+  if (input === '') {
+    return undefined
+  }
 
   if (formattedNumberRe.test(input) === false) {
     throw new ArgumentInvalidError({

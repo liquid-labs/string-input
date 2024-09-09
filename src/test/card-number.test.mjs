@@ -2,21 +2,28 @@ import { CardNumber } from '../card-number'
 
 describe('CardNumber', () => {
   const validInput = [
-    ['378282246310005', undefined],
-    ['3782-822463-10005', undefined],
-    ['3782 822463 10005', undefined],
-    ['5610591081018250', undefined],
-    ['3566002020360505', undefined],
-    ['5019717010103742', { iins : ['50'] }],
-    ['5019717010103742', { iins : [50] }],
-    ['5019717010103742', { iins : [/^50/] }],
-    ['5019717010103742', { iins : ['490-501'] }],
-    ['0123456789999', { iins : ['012-200'] }],
-    ['0123-4567-89999', { validateInput : (input) => input.startsWith('0') }],
+    ['378282246310005', undefined, '378282246310005'],
+    ['3782-822463-10005', undefined, '378282246310005'],
+    ['3782 822463 10005', undefined, '378282246310005'],
+    ['5610591081018250', undefined, '5610591081018250'],
+    ['3566002020360505', undefined, '3566002020360505'],
+    ['5019717010103742', { iins : ['50'] }, '5019717010103742'],
+    ['5019717010103742', { iins : [50] }, '5019717010103742'],
+    ['5019717010103742', { iins : [/^50/] }, '5019717010103742'],
+    ['5019717010103742', { iins : ['490-501'] }, '5019717010103742'],
+    ['0123456789999', { iins : ['012-200'] }, '0123456789999'],
+    [
+      '0123-4567-89999',
+      { validateInput : (input) => input.startsWith('0') },
+      '0123456789999',
+    ],
     [
       '0123-4567-89999',
       { validateValue : (value) => /-/.test(value) === false },
+      '0123456789999',
     ],
+    ['', {}, undefined],
+    ['378282246310005', { required : true }, '378282246310005'],
   ]
 
   const failureInput = [
@@ -57,6 +64,7 @@ describe('CardNumber', () => {
       { validateValue : (value, { name }) => `Card number '${name}' BAD!` },
       'BAD!',
     ],
+    ['', { required : true }, 'is required\\.$'],
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]
@@ -66,10 +74,8 @@ describe('CardNumber', () => {
 
   test.each(validInput)(
     'validates number %s with options %p',
-    (acctNumber, options) => {
-      const expected = acctNumber.replaceAll(/[ -]/g, '')
+    (acctNumber, options, expected) =>
       expect(CardNumber(acctNumber, options)).toBe(expected)
-    }
   )
 
   test.each(failureInput)(

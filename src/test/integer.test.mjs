@@ -17,6 +17,8 @@ describe('Integer', () => {
     ['12', { divisibleBy : 3 }, 12],
     ['12', { validateInput : (input) => input === '12' }, 12],
     ['12', { validateValue : (value) => value === 12 }, 12],
+    ['', {}, undefined],
+    ['100', { required : true }, 100],
   ]
 
   const failureInput = [
@@ -44,6 +46,7 @@ describe('Integer', () => {
       { validateValue : (value) => value === 13 },
       'failed custom value validation',
     ],
+    ['', { required : true }, 'is required\\.$'],
   ].map((params) => {
     params[1].name = 'foo'
     params[2] = "argument 'foo'.*?" + params[2]
