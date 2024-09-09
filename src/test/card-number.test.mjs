@@ -1,4 +1,5 @@
 import { CardNumber } from '../card-number'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 describe('CardNumber', () => {
   const validInput = [
@@ -65,12 +66,8 @@ describe('CardNumber', () => {
       'BAD!',
     ],
     ['', { required : true }, 'is required\\.$'],
-  ].map((params) => {
-    params[1].name = 'foo'
-    params[2] = "argument 'foo'.*?" + params[2]
-
-    return params
-  })
+    ['', { required : true, message : 'foo' }, '^foo$', false],
+  ].map(standardFailureDataMap)
 
   test.each(validInput)(
     'validates number %s with options %p',

@@ -1,4 +1,5 @@
 import { Integer } from '../integer'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 /**
  * Tests the `Integer` type. The tests drive off two test sets, `validInput` and `failureInput`. `validInput` is tested
@@ -47,12 +48,9 @@ describe('Integer', () => {
       'failed custom value validation',
     ],
     ['', { required : true }, 'is required\\.$'],
-  ].map((params) => {
-    params[1].name = 'foo'
-    params[2] = "argument 'foo'.*?" + params[2]
-
-    return params
-  })
+    ['', { required : true, message : 'foo' }, '^foo$', false],
+    [1, { message : 'foo' }, '^foo$', false],
+  ].map(standardFailureDataMap)
   // ^^ In order to keep the `failureInput` compact, we append the `name` and add the name check to the regex here
 
   test.each(validInput)(

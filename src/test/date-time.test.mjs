@@ -1,4 +1,5 @@
 import { DateTime } from '../date-time'
+import { standardFailureDataMap } from './lib/standard-failure-data-map'
 
 describe('DateTime', () => {
   const validInput = [
@@ -162,13 +163,10 @@ describe('DateTime', () => {
       { validateValue : (value) => value.getYear() === 2023 },
       'failed custom value validation',
     ],
+    ['', { required : true, message : 'bar' }, '^bar$', false],
+    [123, { message : 'bar' }, '^bar$', false],
   ]
-    .map((params) => {
-      params[1].name = 'foo'
-      params[2] = "argument 'foo'.*?" + params[2]
-
-      return params
-    })
+    .map(standardFailureDataMap)
     .concat([
       // the following reference the input name differently
       [
