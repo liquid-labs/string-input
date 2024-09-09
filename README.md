@@ -135,19 +135,19 @@ and false/f/no/n/0 as `false` (case insensitive).
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This    can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This   can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
 | [`options.noAbbreviations`] | `boolean` | `false` | Disallow t/f/y/n responses. |
 | [`options.noNumeric`] | `boolean` | `false` | Disallow numeric answers. |
 | [`options.noYesNo`] | `boolean` | `false` | Disallow yes/no/y/n responses. |
-| [`options.treatNegativeValuesAsFalse`] | `boolean` | `false` | When true, inputs that parse as a negative numeric    value will be treated as `false` instead of raising an exception. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.treatNegativeValuesAsFalse`] | `boolean` | `false` | When true, inputs that parse as a negative numeric   value will be treated as `false` instead of raising an exception. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `boolean` - A primitive boolean.
 
 <a id="CardNumber"></a>
-### `CardNumber(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/card-number.mjs#L32)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `CardNumber(input, options)` ⇒ `string` <sup>↱<sup>[source code](./src/card-number.mjs#L34)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
 Validates an input string as a syntactically valid card number.
 
@@ -157,12 +157,12 @@ Validates an input string as a syntactically valid card number.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This    can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
-| [`options.iins`] | `Array.<string>` |  | A list of acceptable Industry Identifier Numbers, or initial card    numbers. E.g., iins : ['123']` would only accept cards with an account number starting with '123'. If left    undefined, then all otherwise valid card numbers are treated as valid. |
-| [`options.lengths`] | `Array.<number>` | `[12, 13, 14, 15, 16, 17, 18, 19` | An array of integers defining acceptable    card lengths. The default value is any length between 12 and 19, inclusive.` |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original input string. See   the [custom validation functions](#custom-validation-functions) section for details on input and return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed value. See the   [custom validation functions](#custom-validation-functions) section for details on input and return values. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This   can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
+| [`options.iins`] | `Array.<string>` |  | A list of acceptable Industry Identifier Numbers, or initial card   numbers. E.g., iins : ['123']` would only accept cards with an account number starting with '123'. If left   undefined, then all otherwise valid card numbers are treated as valid. |
+| [`options.lengths`] | `Array.<number>` | `[12, 13, 14, 15, 16, 17, 18, 19]` | An array of integers defining acceptable   card lengths. The default value is any length between 12 and 19, inclusive.` |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `string` - A number-string with no delimiters. Note, there are valid card numbers beginning with 0.
 
@@ -180,14 +180,14 @@ order.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This    can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
-| [`options.localTimezone`] | `string` |  | For otherwise valid date time input with no time zone    component, then the `localTimeZone` must be specified as an option. This value is only used if the timezone is not    specified in the input string and any timezone specified in the input string will override this value. |
-| [`options.min`] | `string` \| `number` \| `Date` |  | The earliest valid time, inclusive. This may be specified as    any string parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
-| [`options.max`] | `string` \| `number` \| `Date` |  | The latest valid time, inclusive. This may be specified as    any string parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
-| [`options.noEod`] | `boolean` | `false` | Disallows the special times '24:00:00', which represents the last moment    of the day. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This   can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
+| [`options.localTimezone`] | `string` |  | For otherwise valid date time input with no time zone   component, then the `localTimeZone` must be specified as an option. This value is only used if the timezone is not   specified in the input string and any timezone specified in the input string will override this value. |
+| [`options.min`] | `string` \| `number` \| `Date` |  | The earliest valid time, inclusive. This may be specified as   any string parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
+| [`options.max`] | `string` \| `number` \| `Date` |  | The latest valid time, inclusive. This may be specified as   any string parseable by this function, milliseconds since the epoch (UTC), or a Date object. |
+| [`options.noEod`] | `boolean` | `false` | Disallows the special times '24:00:00', which represents the last moment   of the day. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: [`DateTimeData`](#DateTimeData) - The date-time data.
 
@@ -203,12 +203,12 @@ delimiters, along with RFC 2822 style dates like '1 Jan 2024'.
 | `input` | `string` |  | The input string. |
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
-| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This    can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
+| [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors. This   can be used to mark arguments specified by in code or configurations without user input. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
 | [`options.max`] | `string` \| `number` \| `Date` |  | The latest day to be considered valid. |
 | [`options.min`] | `string` \| `number` \| `Date` |  | The earliest day to be considered valid. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: [`DayData`](#DayData) - The day/date data.
 
@@ -224,9 +224,9 @@ Validates the input as a valid EIN.
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
 | [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `string` - A canonically formatted EIN 'XX-XXXXXXX'.
 
@@ -255,7 +255,7 @@ Options can be explicitly defined to allow for a more liberal or restrictive val
 
 These options are largely determined by the the
 [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
-[`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function, 
+[`validateEmail()`](https://github.com/liquid-labs/true-email-validator/?tab=readme-ov-file#validateEmail) function,
 which is used internally to validate the email. All options are passed directly to the `validateEmail()` function.
 
 
@@ -281,8 +281,8 @@ which is used internally to validate the email. All options are passed directly 
 | `options.noPlusEmails` | `boolean` |  | If true, then '+' is not allowed in the username/local part. This is   equivalent to setting `excludeChars = '+'.` |
 | `options.noTLDOnly` | `boolean` |  | If true, then disallows TLD only domains in an address like 'john@com'. |
 | `options.noNonASCIILocalPart` | `boolean` |  | If true, then disallows non-ASCII/international characters in the   username/local part of the address. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: [`EmailData`](#EmailData) - Email data object.
 
@@ -302,8 +302,8 @@ Parses and validates an input string as an integer.
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not itself be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
 | `options.min` | `number` |  | The smallest value considered valid. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `number` - A primitive integer.
 
@@ -323,8 +323,8 @@ Parses and validates an input string as a valid number (float).
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
 | `options.min` | `number` |  | The smallest value considered valid. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `number` - A primitive number.
 
@@ -340,8 +340,8 @@ Parses and validates a string as a valid Social Security Number, with our withou
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
 | [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `string` - A canonically formatted SSN like 'XX-XXX-XXXX'.
 
@@ -361,8 +361,8 @@ ambiguous, this type does not recognize nor accepts timezone specification.
 | `options.max` | `string` |  | A string, parseable by this function, representing the latest valid time. |
 | `options.min` | `string` |  | A string, parseable by this function, representing the earliest valid time. |
 | `options.noEod` | `boolean` |  | Disallows the special times '24:00:00', which represents the last moment of the day. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: [`TimeData`](#TimeData) - The parsed time data.
 
@@ -378,17 +378,17 @@ Validates a string according to the provided options. This is useful when there'
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
 | [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`    is thrown. |
+| [`options.required`] | `boolean` | `false` | If true, then the empty string is rejected and `ArgumentMissingError`   is thrown. |
 | [`options.after`] | `string` |  | The input must be or lexicographically sort after this string. |
 | [`options.before`] | `string` |  | The input must be or lexicographically sort before this string. |
 | [`options.endsWith`] | `string` |  | The input string must end with the indicated string. |
 | [`options.maxLength`] | `number` |  | The longest valid input string in terms of characters. |
-| [`options.matchRe`] | `string` \| `RegExp` |  | The input string must match the provided regular expression.    Specifying a string which is an invalid regular expression will cause an exception to be thrown. |
+| [`options.matchRe`] | `string` \| `RegExp` |  | The input string must match the provided regular expression.   Specifying a string which is an invalid regular expression will cause an exception to be thrown. |
 | [`options.minLength`] | `number` |  | The shortest valid input string in terms of characters. |
-| [`options.oneOf`] | `Array.<string>` |  | The input string must be exactly one of the members of this    array. |
+| [`options.oneOf`] | `Array.<string>` |  | The input string must be exactly one of the members of this   array. |
 | [`options.startsWith`] | `string` |  | The input string must start with the indicated string. |
-| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original    input string. See the [custom validation functions](#custom-validation-functions) section for details on input and    return values. |
-| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed    value. See the [custom validation functions](#custom-validation-functions) section for details on input and return    values. |
+| [`options.validateInput`] | `function` |  | A custom validation function which looks at the original   input string. See the [custom validation functions](#custom-validation-functions) section for details on input and   return values. |
+| [`options.validateValue`] | `function` |  | A custom validation function which looks at the transformed   value. See the [custom validation functions](#custom-validation-functions) section for details on input and return   values. |
 
 **Returns**: `string` - Returns the input.
 
@@ -467,15 +467,15 @@ Represents the time components.
 | `valueOf()` | `function` | Seconds (including fractional seconds) since 00:00:00. |
 
 <a id="getLatestTLDs"></a>
-### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L163)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
+### `getLatestTLDs()` ⇒ `Promise.<object>` <sup>↱<sup>[source code](./src/email.mjs#L165)</sup></sup> <sup>⇧<sup>[global function index](#global-function-index)</sup></sup>
 
-Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The 
+Dynamically retrieves the latest list of valid TLDs from the Internet Assigned Numbers Authority (IANA). The
 resolved result can be passed to the [`Email`](#Email) type function `allowedTLDs` option.
 `
-Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain 
+Note, international domains are decoded and both the decoded (international domain) and encoded ('xn--`) domain
 will be present in the results object as both represent valid domains from a user's point of view.
 
-This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/) 
+This function is re-exported from the [true-email-validator](https://github.com/liquid-labs/true-email-validator/)
 module.
 
 **Returns**: `Promise.<object>` - A Promise resolving to an object whose keys are valid domains; the value of each entry
