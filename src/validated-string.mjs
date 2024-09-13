@@ -2,6 +2,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -41,11 +42,12 @@ const ValidatedString = function (input, options = this || {}) {
     name,
     oneOf,
     startsWith,
-    status,
   } = options
   let { matchRe } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -55,7 +57,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `must be lexicographically after '${after}'`,
-      status,
+      ...options,
     })
   }
   if (before !== undefined && [input, before].sort()[1] !== before) {
@@ -63,7 +65,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `must be lexicographically before '${before}'`,
-      status,
+      ...options,
     })
   }
 
@@ -72,7 +74,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `must end with '${endsWith}'`,
-      status,
+      ...options,
     })
   }
   if (startsWith !== undefined && !input.startsWith(startsWith)) {
@@ -80,7 +82,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `must start with '${startsWith}'`,
-      status,
+      ...options,
     })
   }
 
@@ -93,7 +95,7 @@ const ValidatedString = function (input, options = this || {}) {
         argumentName  : name,
         argumentValue : input,
         issue         : `must match ${matchRe.toString()}`,
-        status,
+        ...options,
       })
     }
   }
@@ -103,7 +105,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `may be no more than ${maxLength} characters long`,
-      status,
+      ...options,
     })
   }
   if (minLength !== undefined && input.length < minLength) {
@@ -111,7 +113,7 @@ const ValidatedString = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : `must be at least ${minLength} characters long`,
-      status,
+      ...options,
     })
   }
 
@@ -128,7 +130,7 @@ const ValidatedString = function (input, options = this || {}) {
         argumentName  : name,
         argumentValue : input,
         issue,
-        status,
+        ...options,
       })
     }
   }

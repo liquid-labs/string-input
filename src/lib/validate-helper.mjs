@@ -4,14 +4,14 @@ const validateHelper = ({ validationArgs, validationFunc, validationType }) => {
   if (validationFunc === undefined) return
 
   const result = validationFunc(...validationArgs)
-  const { input, name, status, type } = validationArgs[1]
+  const { input, name, type, ...options } = validationArgs[1]
   if (typeof result === 'string') {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentType  : type,
       argumentValue : input,
       issue         : result,
-      status,
+      ...options,
     })
   }
   else if (result !== true) {
@@ -20,7 +20,7 @@ const validateHelper = ({ validationArgs, validationFunc, validationType }) => {
       argumentType  : type,
       argumentValue : input,
       issue         : `failed custom ${validationType} validation`,
-      status,
+      ...options,
     })
   }
 }

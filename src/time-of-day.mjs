@@ -4,6 +4,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -43,6 +44,8 @@ const TimeOfDay = function (input, options = this || {}) {
   const { name, noEod, status } = options
   let { min, max } = options
 
+  options = sanitizeOptions(options)
+
   input = standardChecks({ input, name, status, ...options })
   if (input === '') {
     return undefined
@@ -61,6 +64,7 @@ const TimeOfDay = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : 'not recognized as either military, standard, or 24-hour time',
+      ...options,
     })
   }
 
@@ -71,6 +75,7 @@ const TimeOfDay = function (input, options = this || {}) {
     throw new ArgumentInvalidError({
       argumentName : name,
       issue        : "special 'end-of-day' time disallowed",
+      ...options,
     })
   }
 

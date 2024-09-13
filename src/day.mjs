@@ -5,6 +5,7 @@ import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { convertMonthName } from './lib/date-time/convert-month-name'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -41,10 +42,12 @@ import { standardChecks } from './lib/standard-checks'
  * @returns {DayData} The day/date data.
  */
 const Day = function (input, options = this || {}) {
-  const { name, status } = options
+  const { name } = options
   let { max, min } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -64,6 +67,7 @@ const Day = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'is ambiguous',
       hint          : 'Try specifying four digit year (with leading zeros if necessary) to disambiguate US (MM/DD/YYYY) vs international (YYYY/MM/DD) formats.',
+      ...options,
     })
   }
   else if (matchCount === 0) {
@@ -73,6 +77,7 @@ const Day = function (input, options = this || {}) {
       issue :
         'is not recognized as either US, international, or a RFC 2822 style date',
       hint : "Try something like '1/15/2024', '2024-1-15', or '15 Jan 2024'.",
+      ...options,
     })
   }
 
@@ -100,13 +105,13 @@ const Day = function (input, options = this || {}) {
   const date = new Date(year, month - 1, day)
 
   if (max !== undefined) {
-    max = convertToDay(max, name, 'max', status)
+    max = convertToDay(max, name, 'max', options)
   }
   if (min !== undefined) {
-    min = convertToDay(min, name, 'min', status)
+    min = convertToDay(min, name, 'min', options)
   }
 
-  checkMaxMin({ input, max, min, name, status, value : date })
+  checkMaxMin({ ...options, input, max, min, name, value : date })
 
   // The month can't overflow because we only accept valid months, so we just need to check the day of the month
   if (day !== date.getDate()) {
@@ -115,7 +120,7 @@ const Day = function (input, options = this || {}) {
       argumentValue : input,
       issue :
         'looks syntactically valid, but specifies an invalid day for the given month/year.',
-      status,
+      ...options,
     })
   }
 
@@ -129,7 +134,7 @@ const Day = function (input, options = this || {}) {
 Day.description = 'Day'
 Day.toString = () => Day.description
 
-const convertToDay = (value, name, constraint, status) => {
+const convertToDay = (value, name, constraint, options) => {
   if (typeof value === 'string') {
     return Day(value, { name : `${name}' constraint '${constraint}` })
   }
@@ -150,7 +155,7 @@ const convertToDay = (value, name, constraint, status) => {
       argumentName : `${name}' constraint '${constraint}`,
       arguemntType : "string'/'number'/'Date",
       issue        : 'has nonconvertible type',
-      status,
+      ...options,
     })
   } // else
 

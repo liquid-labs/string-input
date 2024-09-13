@@ -3,7 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { makeDateTimeString } from './make-date-time-string'
 
 const getTimezoneOffset = (
-  { name, status },
+  { name, ...options },
   [year, month, day, hours, minutes, seconds, fracSeconds, timezone]
 ) => {
   if (timezone === undefined) {
@@ -51,7 +51,7 @@ const getTimezoneOffset = (
           argumentName : name,
           issue        : 'timezone designation not recognized as valid timezone',
           hint         : "The recognized timezones are limited to basic US timezone like CST and PDT; otherwise it's best to designate the offset like '+1030' or '-0100'.",
-          status,
+          ...options,
         })
       }
       const utcDate = new Date(`${partialSpec} Z`)

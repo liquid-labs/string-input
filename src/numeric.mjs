@@ -3,6 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 import { checkMaxMin } from './lib/check-max-min'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 const leadingZeroRe = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and '0.xx'
@@ -28,9 +29,11 @@ const leadingZeroRe = /^0(?!\.|$)/ // test for leading zeros, but allow '0', and
  * @returns {number} A primitive number.
  */
 const Numeric = function (input, options = this || {}) {
-  const { name, allowLeadingZeros, divisibleBy, max, min, status } = options
+  const { name, allowLeadingZeros, divisibleBy, max, min } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -40,7 +43,7 @@ const Numeric = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : 'contains disallowed leading zeros',
-      status,
+      ...options,
     })
   }
   else if (input !== input.trim()) {
@@ -48,7 +51,7 @@ const Numeric = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : 'contains disallowed leading or trailing space',
-      status,
+      ...options,
     })
   }
 
@@ -60,13 +63,13 @@ const Numeric = function (input, options = this || {}) {
 
   const value = Number(input)
   // TODO: wrap these two together in 'checkNumerics' and share with Integer
-  checkMaxMin({ input, max, min, name, status, value })
+  checkMaxMin({ ...options, input, max, min, name, value })
   if (divisibleBy !== undefined && value % divisibleBy !== 0) {
     throw new ArgumentInvalidError({
       argumentName  : name,
       argumentValue : input,
       issue         : `must be divisible by '${divisibleBy}'`,
-      status,
+      ...options,
     })
   }
 

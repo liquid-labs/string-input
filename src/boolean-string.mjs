@@ -4,6 +4,7 @@ import { floatRe } from 'regex-repo'
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
 import { possibleBooleanValues } from './lib/possible-boolean-values'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -35,11 +36,12 @@ const BooleanString = function (input, options = this || {}) {
     noAbbreviations = false,
     noNumeric = false,
     noYesNo = false,
-    status,
     treatNegativeValuesAsFalse = false,
   } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -55,7 +57,7 @@ const BooleanString = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'is disallowed abbreviated value',
       hint          : `Use ${possibleBooleanValues(options)}.`,
-      status,
+      ...options,
     })
   }
 
@@ -68,7 +70,7 @@ const BooleanString = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'is disallowed yes/no value',
       hint          : `Use ${possibleBooleanValues(options)}.`,
-      status,
+      ...options,
     })
   }
 
@@ -87,7 +89,7 @@ const BooleanString = function (input, options = this || {}) {
         argumentValue : input,
         issue         : 'is disallowed numeric value',
         hint          : `Use ${possibleBooleanValues(options)}.`,
-        status,
+        ...options,
       })
     }
     else if (
@@ -100,7 +102,7 @@ const BooleanString = function (input, options = this || {}) {
         argumentValue : input,
         issue         : 'could not be parsed as a boolean value',
         hint          : `Use ${possibleBooleanValues(options)}.`,
-        status,
+        ...options,
       })
     }
     if (
@@ -118,7 +120,7 @@ const BooleanString = function (input, options = this || {}) {
         argumentValue : input,
         issue         : 'is ambiguous negative numeric value',
         hint          : `Use ${possibleBooleanValues(options)}.`,
-        status,
+        ...options,
       })
     }
   }

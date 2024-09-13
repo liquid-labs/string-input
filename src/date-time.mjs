@@ -9,6 +9,7 @@ import { makeDateTimeString } from './lib/date-time/make-date-time-string'
 import { processIdiomaticDateTime } from './lib/date-time/process-idiomatic-date-time'
 import { processISO8601DateTime } from './lib/date-time/process-iso-8601-date-time'
 import { processRFC2822DateTime } from './lib/date-time/process-rfc-2822-date-time'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -45,7 +46,7 @@ import { standardChecks } from './lib/standard-checks'
  * @param {boolean} [options.required = false] - If true, then the empty string is rejected and `ArgumentMissingError`
  *   is thrown.
  * @param {string} [options.localTimezone = undefined] - For otherwise valid date time input with no time zone
- *   component, then the `localTimeZone` must be specified as an option. This value is only used if the timezone is not
+ *   component, then the `localTimezone` must be specified as an option. This value is only used if the timezone is not
  *   specified in the input string and any timezone specified in the input string will override this value.
  * @param {string|number|Date} [options.min = undefined] - The earliest valid time, inclusive. This may be specified as
  *   any string parseable by this function, milliseconds since the epoch (UTC), or a Date object.
@@ -64,10 +65,12 @@ import { standardChecks } from './lib/standard-checks'
 const DateTime = function (input, options = this || {}) {
   // we deconstruct options here instead of in the function call because we use the options later to create the
   // 'validationOptions'
-  const { name, localTimezone, noEod, status = 400 } = options
+  const { name, localTimezone, noEod } = options
   let { min, max } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -97,7 +100,7 @@ const DateTime = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : "uses disallowed special EOD time '24:00'",
-      status,
+      ...options,
     })
   }
 
@@ -200,7 +203,7 @@ const DateTime = function (input, options = this || {}) {
       status        : 500,
     })
   }
-  checkMaxMin({ input, max, min, name, status, value })
+  checkMaxMin({ ...options, input, max, min, name, value })
 
   checkValidateValue(value, validationOptions)
 
