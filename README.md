@@ -298,7 +298,7 @@ Parses and validates an input string as an integer.
 | `options` | `object` |  | The validation options. |
 | `options.name` | `string` |  | The 'name' by which to refer to the input when generating error messages for the user. |
 | [`options.status`] | `number` | `400` | The HTTP status to use when throwing `ArgumentInvalidError` errors.   This can be used to mark arguments specified by in code or configurations without user input. |
-| [`options.allowLeadingZeros`] | `boolean` | `false` | Overrides default behavior which rejects strings with leading    zeros. |
+| [`options.allowLeadingZeros`] | `boolean` | `false` | Overrides default behavior which rejects strings with leading   zeros. |
 | `options.divisibleBy` | `number` |  | Requires the resulting integer value be divisible by the indicated number (   which need not itself be an integer). |
 | `options.max` | `number` |  | The largest value considered valid. |
 | `options.min` | `number` |  | The smallest value considered valid. |
