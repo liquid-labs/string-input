@@ -5,20 +5,20 @@ import { getTimezoneOffset } from './get-timezone-offset'
 const fracSecondsPrecision = 100000
 
 const processISO8601DateTime = (options, iso8601Match, localTimezone) => {
-  const { name, status } = options
+  const { name, ...errOptions } = options
 
   if (iso8601Match[5] !== undefined) {
     throw new ArgumentInvalidError({
       argumentName : name,
       issue        : 'does not support week of year style dates',
-      status,
+      ...errOptions,
     })
   }
   else if (iso8601Match[7] !== undefined) {
     throw new ArgumentInvalidError({
       argumentName : name,
       issue        : 'does not support day of year/ordinal/Julian style dates',
-      status,
+      ...errOptions,
     })
   }
 

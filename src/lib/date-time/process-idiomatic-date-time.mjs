@@ -13,7 +13,7 @@ import { convertMonthName } from './convert-month-name'
 import { getTimezoneOffset } from './get-timezone-offset'
 
 const processIdiomaticDateTime = (options, input, localTimezone) => {
-  const { name, status } = options
+  const { name, ...errOptions } = options
 
   // mil time can easily be confused for the year, so we have to exclude matches to the year
   const milTimeRe = new RegExp(
@@ -37,7 +37,7 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
       argumentName  : name,
       argumentValue : input,
       issue         : 'does not contain a recognizable time component',
-      status,
+      ...errOptions,
     })
   }
   // I don't believe multiple matches is actually possible.
@@ -60,7 +60,7 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
       argumentName  : name,
       argumentValue : input,
       issue         : 'does not contain a recognizable date component',
-      status,
+      ...errOptions,
     })
   }
   else if (dayMatches > 1) {
@@ -69,7 +69,7 @@ const processIdiomaticDateTime = (options, input, localTimezone) => {
       argumentValue : input,
       issue         : 'date component is ambiguous',
       hint          : "Try specifying a 4+ digit year (pad with '0' where necessary).",
-      status,
+      ...errOptions,
     })
   }
 

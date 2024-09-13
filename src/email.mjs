@@ -1,6 +1,7 @@
 import { getLatestTLDs, validateEmail } from 'true-email-validator'
 import { ArgumentInvalidError } from 'standard-error-set'
 
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -109,9 +110,11 @@ import { standardChecks } from './lib/standard-checks'
  * @returns {EmailData} Email data object.
  */
 const Email = function (input, options = this || {}) {
-  const { name, status } = options
+  const { name, ...errOptions } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -134,7 +137,7 @@ const Email = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : issues.join(', '),
-      status,
+      ...errOptions,
     })
   }
 

@@ -3,6 +3,7 @@ import { ArgumentInvalidError } from 'standard-error-set'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 /**
@@ -23,9 +24,11 @@ import { standardChecks } from './lib/standard-checks'
  * @returns {string} A canonically formatted EIN 'XX-XXXXXXX'.
  */
 const EIN = function (input, options = this || {}) {
-  const { name, status } = options
+  const { name } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -36,7 +39,7 @@ const EIN = function (input, options = this || {}) {
       argumentName  : name,
       argumentValue : input,
       issue         : 'is not a valid EIN',
-      status,
+      ...options,
     })
   }
   const validationOptions = Object.assign(

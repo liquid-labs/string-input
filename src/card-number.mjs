@@ -3,6 +3,7 @@ import luhn from 'luhn'
 
 import { checkValidateInput } from './lib/check-validate-input'
 import { checkValidateValue } from './lib/check-validate-value'
+import { sanitizeOptions } from './lib/sanitize-options'
 import { standardChecks } from './lib/standard-checks'
 
 const seps = '[ -]'
@@ -32,14 +33,11 @@ const rawNumberRe = new RegExp(seps, 'g')
  * @returns {string} A number-string with no delimiters. Note, there are valid card numbers beginning with 0.
  */
 const CardNumber = function (input, options = this || {}) {
-  const {
-    name,
-    iins,
-    lengths = [12, 13, 14, 15, 16, 17, 18, 19],
-    status,
-  } = options
+  const { name, iins, lengths = [12, 13, 14, 15, 16, 17, 18, 19] } = options
 
-  input = standardChecks({ input, name, status, ...options })
+  options = sanitizeOptions(options)
+
+  input = standardChecks({ ...options, input, name })
   if (input === '') {
     return undefined
   }
@@ -50,7 +48,7 @@ const CardNumber = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'does not appear to be a card number',
       hint          : "Expects a number with optional dashes ('-') or spaces (' ').",
-      status,
+      ...options,
     })
   }
 
@@ -61,7 +59,7 @@ const CardNumber = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'is an invalid length',
       hint          : `Card number must be ${lengths.join(', ')} digits long.`,
-      status,
+      ...options,
     })
   }
 
@@ -134,7 +132,7 @@ const CardNumber = function (input, options = this || {}) {
       argumentValue : input,
       issue         : 'failed the check-digit validation',
       hint          : 'Check input for typos.',
-      status,
+      ...options,
     })
   }
 
