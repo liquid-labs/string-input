@@ -1,0 +1,63 @@
+Test git rev: dc2003853b6aae026e36780d337c9eae562286ac
+(node:63824) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+PASS test/type-names.test.js
+PASS test/date-time.test.js
+PASS test/day.test.js
+PASS test/email.test.js
+PASS test/time-of-day.test.js
+PASS test/card-number.test.js
+PASS test/validate-string.test.js
+PASS test/integer.test.js
+PASS test/boolean-string.test.js
+PASS test/numeric.test.js
+PASS test/ein.test.js
+PASS test/ssn.test.js
+PASS lib/date-time/test/process-idiomatic-date-time.test.js
+PASS lib/date-time/test/process-iso-8601-date-time.test.js
+PASS lib/date-time/test/get-timezone-offset.test.js
+PASS lib/date-time/test/process-rfc-2822-date-time.test.js
+PASS lib/date-time/test/convert-month-name.test.js
+PASS lib/test/possible-boolean-values.test.js
+PASS lib/date-time/test/convert-timezone-offset-to-string.test.js
+----------------------------------------|---------|----------|---------|---------|-------------------
+File                                    | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------------------------------------|---------|----------|---------|---------|-------------------
+All files                               |   99.75 |     97.6 |     100 |   99.71 |                   
+ src                                    |   99.63 |    97.78 |     100 |   99.57 |                   
+  boolean-string.mjs                    |     100 |      100 |     100 |     100 |                   
+  card-number.mjs                       |     100 |    96.55 |     100 |     100 | 36                
+  date-time.mjs                         |     100 |      100 |     100 |     100 |                   
+  day.mjs                               |     100 |    96.47 |     100 |     100 | 92,99-101         
+  ein.mjs                               |     100 |      100 |     100 |     100 |                   
+  email.mjs                             |   96.55 |     92.3 |     100 |   95.65 | 134               
+  integer.mjs                           |     100 |      100 |     100 |     100 |                   
+  numeric.mjs                           |   97.14 |    94.44 |     100 |   96.29 | 50                
+  ssn.mjs                               |     100 |      100 |     100 |     100 |                   
+  time-of-day.mjs                       |     100 |    96.62 |     100 |     100 | 131-134,152       
+  validated-string.mjs                  |     100 |      100 |     100 |     100 |                   
+ src/lib                                |     100 |    95.23 |     100 |     100 |                   
+  check-max-min.mjs                     |     100 |      100 |     100 |     100 |                   
+  check-required.mjs                    |     100 |      100 |     100 |     100 |                   
+  check-validate-input.mjs              |     100 |       75 |     100 |     100 | 3                 
+  check-validate-value.mjs              |     100 |       75 |     100 |     100 | 3                 
+  possible-boolean-values.mjs           |     100 |      100 |     100 |     100 |                   
+  sanitize-options.mjs                  |     100 |      100 |     100 |     100 |                   
+  standard-checks.mjs                   |     100 |      100 |     100 |     100 |                   
+  type-checks.mjs                       |     100 |      100 |     100 |     100 |                   
+  validate-helper.mjs                   |     100 |      100 |     100 |     100 |                   
+ src/lib/date-time                      |     100 |    97.71 |     100 |     100 |                   
+  convert-month-name.mjs                |     100 |      100 |     100 |     100 |                   
+  convert-timezone-offset-to-string.mjs |     100 |      100 |     100 |     100 |                   
+  get-timezone-offset.mjs               |     100 |      100 |     100 |     100 |                   
+  make-date-time-string.mjs             |     100 |      100 |     100 |     100 |                   
+  process-idiomatic-date-time.mjs       |     100 |    96.81 |     100 |     100 | 79,87-90,106,115  
+  process-iso-8601-date-time.mjs        |     100 |      100 |     100 |     100 |                   
+  process-rfc-2822-date-time.mjs        |     100 |      100 |     100 |     100 |                   
+----------------------------------------|---------|----------|---------|---------|-------------------
+
+Test Suites: 19 passed, 19 total
+Tests:       595 passed, 595 total
+Snapshots:   0 total
+Time:        0.84 s, estimated 1 s
+Ran all test suites.
