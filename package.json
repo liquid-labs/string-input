@@ -1,6 +1,6 @@
 {
   "name": "string-input",
-  "version": "1.0.0-alpha.12",
+  "version": "1.0.0-alpha.13",
   "description": "A library to validate user input strings; compatible with command-line-args.",
   "main": "dist/specify-input.js",
   "scripts": {
